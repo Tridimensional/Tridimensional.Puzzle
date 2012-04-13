@@ -2,9 +2,9 @@ obj
 Library
 ProjectSettings
 Properties
+Temp
 *.sln
 *.pidb
-*.unityproj
 *.userprefs
 *.csproj
 *.user
