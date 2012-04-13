@@ -9,6 +9,6 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        gameObject.transform.position = new Vector3(0, 0, -0.4f);
+        gameObject.transform.position = new Vector3(0, 0, -0.38f);
     }
 }
