@@ -12,6 +12,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
         {
             switch (sliceProgram)
             {
+                case SliceProgram.Random:
+                    return new RandomSliceStrategy();
                 default:
                     return new DefaultSliceStrategy();
             }

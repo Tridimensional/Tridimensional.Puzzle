@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class WelcomeController : MonoBehaviour
 {
-    private float Duration = 0.5f;
+    private float Duration = 3f;
     private Texture2D LogoTexture;
     private Rect LogoTextureRect;
     private Color BackgroundColor;

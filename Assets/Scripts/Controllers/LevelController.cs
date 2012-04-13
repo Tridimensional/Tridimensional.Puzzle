@@ -44,28 +44,45 @@ public class LevelController : MonoBehaviour
         }
     }
 
+    //void Update()
+    //{
+    //    ///////////////////////////////////
+
+    //    var speed = 100.0f;
+    //    var model = GameObject.Find("Model (0, 0)");
+    //    var mesh = model.GetComponent<MeshFilter>().mesh;
+    //    var normals = mesh.normals;
+    //    var rotation = Quaternion.AngleAxis(Time.deltaTime * speed, Vector3.up);
+
+    //    for (var i = 0; i < normals.Length; i++)
+    //    {
+    //        normals[i] = rotation * normals[i];
+    //    }
+
+    //    mesh.normals = normals;
+
+    //    ///////////////////////////////////
+    //}
+
     void GeneratePuzzleModels()
     {
         var backgroundImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
         var formation = _modelService.GetProperFormation(backgroundImage.width, backgroundImage.height, 100);
 
-        var sliceContract = _modelService.GetSlice(formation, SliceProgram.Default);
+        var sliceContract = _modelService.GetSlice(formation, SliceProgram.Random);
         var meshes = _modelService.GenerateMesh(sliceContract);
 
         for (var i = 0; i < meshes.GetLength(0); i++)
         {
             for (var j = 0; j < meshes.GetLength(1); j++)
             {
-                try
-                {
-                    var go = new GameObject(string.Format("MODEL R{0} C{1}", i, j));
-                    go.AddComponent<MeshFilter>().mesh = meshes[i,j];
-                    go.AddComponent<MeshRenderer>().material.color = Color.red;
-                }
-                catch (Exception ex)
-                {
-                    Debug.Log(ex);
-                }
+                var go = new GameObject(string.Format("Model ({0}, {1})", i, j));
+
+                var meshFilter = go.AddComponent<MeshFilter>();
+                meshFilter.mesh = meshes[i, j];
+
+                var meshRender = go.AddComponent<MeshRenderer>();
+                meshRender.material.color = (i + j) % 2 == 0 ? Color.black : Color.white;
             }
         }
     }
