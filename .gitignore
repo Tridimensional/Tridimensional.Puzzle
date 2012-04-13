@@ -1,8 +1,11 @@
-bin
 obj
-Logs
-.DS_Store
+Library
+ProjectSettings
+Properties
+*.sln
+*.pidb
+*.unityproj
+*.userprefs
+*.csproj
 *.user
 *.suo
-*.Publish.xml
-*.InstallLog
