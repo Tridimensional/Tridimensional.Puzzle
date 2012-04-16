@@ -2,6 +2,7 @@ obj
 ProjectSettings
 Properties
 Temp
+ScriptAssemblies
 *.sln
 *.pidb
 *.userprefs
