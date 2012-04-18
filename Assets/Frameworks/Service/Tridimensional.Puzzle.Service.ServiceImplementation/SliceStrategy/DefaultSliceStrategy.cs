@@ -1,5 +1,4 @@
-﻿using Tridimensional.Puzzle.Foundation.Entity;
-using Tridimensional.Puzzle.Service.Contract;
+﻿using Tridimensional.Puzzle.Service.Contract;
 using UnityEngine;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
@@ -30,7 +29,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return vertexes;
         }
 
-        public override Vector2[] GetConnectPoints(bool inverted)
+        public override Vector2[] GetConnectPoints(bool needFlip)
         {
             var points = new[] {
                 new Vector2(0f,0f),
@@ -69,10 +68,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
                 new Vector2(1f, 0f)
             };
 
-            if (inverted)
-            {
-                for (var i = 0; i < points.Length; i++) { points[i].y *= -1; }
-            }
+            for (var i = 0; i < points.Length; i++) { points[i].y *= -1; }
 
             return points;
         }

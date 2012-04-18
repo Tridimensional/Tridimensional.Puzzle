@@ -18,7 +18,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             var vertexes = new Vector2[formation.Rows + 1, formation.Columns + 1];
             var rows = vertexes.GetLength(0);
             var columns = vertexes.GetLength(1);
-            var randomScale = formation.Width / formation.Columns / 12;
+            var randomScale = formation.Width / formation.Columns / 10;
 
             for (var i = 0; i < rows; i++)
             {
@@ -31,7 +31,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return vertexes;
         }
 
-        public override Vector2[] GetConnectPoints(bool inverted)
+        public override Vector2[] GetConnectPoints(bool needFlip)
         {
             var points = new[] {
                 new Vector2(0f,0f),
