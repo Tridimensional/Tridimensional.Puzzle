@@ -10,8 +10,22 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
 	public class MeshService : IMeshService
     {
+		//total width of puzzle
+		private float pzWidth;
+		//total height of puzzle
+		private float pzHeight;
+		//start x of puzzle
+		private float startX;
+		//start y of puzzle
+		private float startY;
+		
         public Mesh[,] GenerateMesh(SliceContract sliceContract)
         {
+			pzWidth = sliceContract.Vertexes[0,sliceContract.Vertexes.GetLength(1) - 1].x - sliceContract.Vertexes[0,0].x;
+			pzHeight = sliceContract.Vertexes[sliceContract.Vertexes.GetLength(0) - 1,0].y - sliceContract.Vertexes[0,0].y;
+			startX = sliceContract.Vertexes[0,0].x;
+			startY = sliceContract.Vertexes[0,0].y;
+			
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
             var result = new Mesh[rows, columns];
@@ -67,9 +81,21 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             mesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContract);
             mesh.triangles = GetTriangles(upperTriangles, sideTriangles, bottomTriangles);
-
+			mesh.uv = GetUVs(topVertexeContracts,bottomVertexeContract.Length);
+			
             return mesh;
         }
+		
+		private Vector2[] GetUVs(VertexContract[] vertexes,int backVertexCount)
+		{
+			Vector2[] UVValue = new Vector2[vertexes.Length + backVertexCount];
+			for(int i=0; i < vertexes.Length; i++)
+			{
+				UVValue[i] = new Vector2((vertexes[i].x - startX)/pzWidth,(vertexes[i].y - startY)/pzHeight);
+			}
+			
+			return UVValue;
+		}
 
         private Vector3[] GetVertexes(params VertexContract[][] vertexes)
         {
