@@ -1,8 +1,8 @@
 obj
-Library
 ProjectSettings
 Properties
 Temp
+ScriptAssemblies
 *.sln
 *.pidb
 *.userprefs

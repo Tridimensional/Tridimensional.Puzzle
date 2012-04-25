@@ -82,7 +82,8 @@ public class LevelController : MonoBehaviour
                 meshFilter.mesh = meshes[i, j];
 
                 var meshRender = go.AddComponent<MeshRenderer>();
-                meshRender.material.color = (i + j) % 2 == 0 ? Color.black : Color.white;
+                //meshRender.material.color = (i + j) % 2 == 0 ? Color.black : Color.white;
+				meshRender.material.mainTexture = backgroundImage;
             }
         }
     }

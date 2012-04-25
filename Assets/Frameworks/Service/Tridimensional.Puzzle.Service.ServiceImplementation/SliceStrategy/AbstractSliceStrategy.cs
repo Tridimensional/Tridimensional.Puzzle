@@ -10,7 +10,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
     {
         public abstract SliceContract GetSlice(FormationContract formationContract);
         public abstract Vector2[,] GetVertexes(FormationContract formationContract);
-        public abstract Vector2[] GetConnectPoints(bool inverted);
+        public abstract Vector2[] GetConnectPoints(bool needFlip);
 
         public LineDictionary GetLines(Vector2[,] vertexes)
         {
@@ -43,18 +43,16 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
         private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2, Vector2[,] vertexes)
         {
             if ((x1 == 0 && x2 == 0) || (y1 == 0 && y2 == 0)) { lineDictionary[x1, y1, x2, y2] = null; return; }
-
             var rows = vertexes.GetLength(0);
             var columns = vertexes.GetLength(1);
-
             if ((x1 == x2 && x1 == rows - 1) || (y1 == y2 && y1 == columns - 1)) { lineDictionary[x1, y1, x2, y2] = null; return; }
 
             lineDictionary[x1, y1, x2, y2] = GetConnectPoints(vertexes[x1, y1], vertexes[x2, y2], (x1 + y1) % 2 == 0);
         }
 
-        private Vector2[] GetConnectPoints(Vector2 head, Vector2 tail, bool inverted)
+        private Vector2[] GetConnectPoints(Vector2 head, Vector2 tail, bool needFlip)
         {
-            var points = GetConnectPoints(inverted);
+            var points = GetConnectPoints(needFlip);
             var angle = VectorUtility.GetAngle(points[points.Length - 1] - points[0], tail - head);
             var zoom = Vector2.Distance(tail, head) / Vector2.Distance(points[points.Length - 1], points[0]);
             var result = new Vector2[points.Length - 2];
