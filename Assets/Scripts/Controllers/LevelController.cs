@@ -50,7 +50,7 @@ public class LevelController : MonoBehaviour
         var layoutContract = _modelService.GetProperLayout(backgroundImage.width, backgroundImage.height, 100);
 
         var sliceContract = _modelService.GetSlice(layoutContract, SliceProgram.Random);
-        var meshes = _modelService.GenerateMesh(sliceContract);
+        var meshes = _modelService.GenerateMesh(sliceContract, backgroundImage);
 
         for (var i = 0; i < meshes.GetLength(0); i++)
         {

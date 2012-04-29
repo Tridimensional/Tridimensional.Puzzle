@@ -54,9 +54,17 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return sliceStrategy.GetSlice(layoutContract);
         }
 
-        public MeshContract[,] GenerateMesh(SliceContract sliceContract)
+        public MeshContract[,] GenerateMesh(SliceContract sliceContract, Texture2D image)
         {
-            return _meshService.GenerateMesh(sliceContract);
+            var sliceWidth = sliceContract.Vertexes[0, sliceContract.Vertexes.GetLength(1) - 1].x - sliceContract.Vertexes[0, 0].x;
+            var sliceHeight = sliceContract.Vertexes[sliceContract.Vertexes.GetLength(0) - 1, 0].y - sliceContract.Vertexes[0, 0].y;
+
+            var mappingOffset = new Vector2(0, 0);
+
+            if (sliceWidth * image.height > sliceHeight * image.width) { mappingOffset.y = (sliceWidth * image.height / image.width - sliceHeight) / 2; }
+            else { mappingOffset.x = (sliceHeight * image.width / image.height - sliceWidth) / 2; }
+
+            return _meshService.GenerateMesh(sliceContract, mappingOffset);
         }
     }
 }

@@ -5,6 +5,6 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
 	public interface IMeshService
 	{
-        MeshContract[,] GenerateMesh(SliceContract sliceContract);
+        MeshContract[,] GenerateMesh(SliceContract sliceContract, Vector2 mappingOffset);
     }
 }
