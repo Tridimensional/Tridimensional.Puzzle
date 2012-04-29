@@ -8,8 +8,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
     public abstract class AbstractSliceStrategy
     {
-        public abstract SliceContract GetSlice(FormationContract formationContract);
-        public abstract Vector2[,] GetVertexes(FormationContract formationContract);
+        public abstract SliceContract GetSlice(LayoutContract layoutContract);
+        public abstract Vector2[,] GetVertexes(LayoutContract layoutContract);
         public abstract Vector2[] GetConnectPoints(bool needFlip);
 
         public LineDictionary GetLines(Vector2[,] vertexes)

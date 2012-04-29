@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Tridimensional.Puzzle.Service.Contract
 {
-	public class FormationContract
+	public class LayoutContract
 	{
         public int Rows { get; set; }
         public int Columns { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
-	}
+    }
 }

@@ -47,23 +47,23 @@ public class LevelController : MonoBehaviour
     void GeneratePuzzleModels()
     {
         var backgroundImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
-        var formation = _modelService.GetProperFormation(backgroundImage.width, backgroundImage.height, 100);
+        var layoutContract = _modelService.GetProperLayout(backgroundImage.width, backgroundImage.height, 100);
 
-        var sliceContract = _modelService.GetSlice(formation, SliceProgram.Random);
+        var sliceContract = _modelService.GetSlice(layoutContract, SliceProgram.Random);
         var meshes = _modelService.GenerateMesh(sliceContract);
 
         for (var i = 0; i < meshes.GetLength(0); i++)
         {
             for (var j = 0; j < meshes.GetLength(1); j++)
             {
-                var go = new GameObject(string.Format("Model ({0}, {1})", i, j));
+                var go = new GameObject(string.Format("Model ({0:00}, {1:00})", i, j));
+                go.AddComponent<MeshFilter>().mesh = meshes[i, j].BackseatMesh;
+                go.AddComponent<MeshRenderer>().material.color = Color.white;
 
-                var meshFilter = go.AddComponent<MeshFilter>();
-                meshFilter.mesh = meshes[i, j];
-
-                var meshRender = go.AddComponent<MeshRenderer>();
-                meshRender.material.color = Color.white;
-				meshRender.material.mainTexture = backgroundImage;
+                var mapping = new GameObject("Mapping");
+                mapping.AddComponent<MeshFilter>().mesh = meshes[i, j].MappingMesh;
+                mapping.AddComponent<MeshRenderer>().material.mainTexture = backgroundImage;
+                mapping.transform.parent = go.transform;
             }
         }
     }

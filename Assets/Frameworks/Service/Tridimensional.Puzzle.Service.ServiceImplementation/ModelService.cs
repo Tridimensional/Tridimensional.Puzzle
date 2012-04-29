@@ -19,42 +19,42 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             _sliceStrategyFactory = sliceStrategyFactory;
         }
 
-        public FormationContract GetProperFormation(int width, int height, GameDifficulty gameDifficulty)
+        public LayoutContract GetProperLayout(int width, int height, GameDifficulty gameDifficulty)
         {
             var puzzleCount = gameDifficulty.ToProperPuzzleCount();
-            return GetProperFormation(width, height, puzzleCount);
+            return GetProperLayout(width, height, puzzleCount);
         }
 
-        public FormationContract GetProperFormation(int width, int height, int count)
+        public LayoutContract GetProperLayout(int width, int height, int count)
         {
             var rows = Math.Sqrt(1.0 * height / width * count);
             var columns = rows * width / height;
-            var formation = new FormationContract();
+            var layoutContract = new LayoutContract();
 
-            formation.Rows = (int)Math.Ceiling(rows);
-            formation.Columns = (int)Math.Ceiling(columns);
+            layoutContract.Rows = (int)Math.Ceiling(rows);
+            layoutContract.Columns = (int)Math.Ceiling(columns);
 
             if (width > height)
             {
-                formation.Width = GlobalConfiguration.PictureRangeInMeter;
-                formation.Height = formation.Width * formation.Rows / formation.Columns;
+                layoutContract.Width = GlobalConfiguration.PictureRangeInMeter;
+                layoutContract.Height = layoutContract.Width * layoutContract.Rows / layoutContract.Columns;
             }
             else
             {
-                formation.Height = GlobalConfiguration.PictureRangeInMeter;
-                formation.Width = formation.Height * formation.Columns / formation.Rows;
+                layoutContract.Height = GlobalConfiguration.PictureRangeInMeter;
+                layoutContract.Width = layoutContract.Height * layoutContract.Columns / layoutContract.Rows;
             }
 
-            return formation;
+            return layoutContract;
         }
 
-        public SliceContract GetSlice(FormationContract formationContract, SliceProgram sliceProgram)
+        public SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram)
         {
             var sliceStrategy = _sliceStrategyFactory.Create(sliceProgram);
-            return sliceStrategy.GetSlice(formationContract);
+            return sliceStrategy.GetSlice(layoutContract);
         }
 
-        public Mesh[,] GenerateMesh(SliceContract sliceContract)
+        public MeshContract[,] GenerateMesh(SliceContract sliceContract)
         {
             return _meshService.GenerateMesh(sliceContract);
         }
