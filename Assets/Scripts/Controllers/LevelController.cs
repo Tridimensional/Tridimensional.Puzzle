@@ -44,26 +44,6 @@ public class LevelController : MonoBehaviour
         }
     }
 
-    //void Update()
-    //{
-    //    ///////////////////////////////////
-
-    //    var speed = 100.0f;
-    //    var model = GameObject.Find("Model (0, 0)");
-    //    var mesh = model.GetComponent<MeshFilter>().mesh;
-    //    var normals = mesh.normals;
-    //    var rotation = Quaternion.AngleAxis(Time.deltaTime * speed, Vector3.up);
-
-    //    for (var i = 0; i < normals.Length; i++)
-    //    {
-    //        normals[i] = rotation * normals[i];
-    //    }
-
-    //    mesh.normals = normals;
-
-    //    ///////////////////////////////////
-    //}
-
     void GeneratePuzzleModels()
     {
         var backgroundImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
@@ -82,7 +62,7 @@ public class LevelController : MonoBehaviour
                 meshFilter.mesh = meshes[i, j];
 
                 var meshRender = go.AddComponent<MeshRenderer>();
-                //meshRender.material.color = (i + j) % 2 == 0 ? Color.black : Color.white;
+                meshRender.material.color = Color.white;
 				meshRender.material.mainTexture = backgroundImage;
             }
         }

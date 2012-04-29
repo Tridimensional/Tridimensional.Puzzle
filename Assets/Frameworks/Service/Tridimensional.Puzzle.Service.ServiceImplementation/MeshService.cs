@@ -72,30 +72,30 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x, refer.y, 0));
             var bottomVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x, refer.y, 0.003f));
 
-            var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0);
-            var bottomVertexeContract = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length);
+            var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0).Link();
+            var bottomVertexeContracts = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length).Link();
 
             var upperTriangles = GetTriangles(topVertexeContracts.Copy());
-            var sideTriangles = GetTriangles(topVertexeContracts.Copy(), bottomVertexeContract.Copy(), Shape.Cylinder);
-            var bottomTriangles = GetTriangles(bottomVertexeContract.Copy(), true);
+            var sideTriangles = GetTriangles(topVertexeContracts.Copy(), bottomVertexeContracts.Copy(), Shape.Cylinder);
+            var bottomTriangles = GetTriangles(bottomVertexeContracts.Copy(), true);
 
-            mesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContract);
+            mesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
             mesh.triangles = GetTriangles(upperTriangles, sideTriangles, bottomTriangles);
-			mesh.uv = GetUVs(topVertexeContracts,bottomVertexeContract.Length);
+            mesh.uv = GetUVs(topVertexeContracts, bottomVertexeContracts.Length);
 			
             return mesh;
         }
-		
-		private Vector2[] GetUVs(VertexContract[] vertexes,int backVertexCount)
-		{
-			Vector2[] UVValue = new Vector2[vertexes.Length + backVertexCount];
-			for(int i=0; i < vertexes.Length; i++)
-			{
-				UVValue[i] = new Vector2((vertexes[i].x - startX)/pzWidth,(vertexes[i].y - startY)/pzHeight);
-			}
-			
-			return UVValue;
-		}
+
+        private Vector2[] GetUVs(VertexContract[] vertexes, int backVertexCount)
+        {
+            Vector2[] UVValue = new Vector2[vertexes.Length + backVertexCount];
+            for (int i = 0; i < vertexes.Length; i++)
+            {
+                UVValue[i] = new Vector2((vertexes[i].x - startX) / pzWidth, (vertexes[i].y - startY) / pzHeight);
+            }
+
+            return UVValue;
+        }
 
         private Vector3[] GetVertexes(params VertexContract[][] vertexes)
         {
@@ -186,9 +186,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 triangles.Add(pointer1.Index);
                 triangles.Add(pointer2.Index);
                 triangles.Add(pointer1.Next.Index);
+                triangles.Add(pointer1.Next.Index);
                 triangles.Add(pointer2.Index);
                 triangles.Add(pointer2.Next.Index);
-                triangles.Add(pointer1.Next.Index);
 
                 pointer1 = pointer1.Next;
                 pointer2 = pointer2.Next;
@@ -197,24 +197,16 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             triangles.Add(pointer1.Index);
             triangles.Add(pointer2.Index);
             triangles.Add(pointer1.Next.Index);
+            triangles.Add(pointer1.Next.Index);
             triangles.Add(pointer2.Index);
             triangles.Add(pointer2.Next.Index);
-            triangles.Add(pointer1.Next.Index);
 
             return triangles;
         }
 
         private VertexContract[] ConvertToVertexContracts(Vector3[] vector3s, int startIndex)
         {
-            var vertexContracts = Array.ConvertAll<Vector3, VertexContract>(vector3s, refer => refer.ToVertexContract(startIndex++));
-
-            for (var i = 0; i < vertexContracts.Length; i++)
-            {
-                vertexContracts[i].Previous = i == 0 ? vertexContracts[vertexContracts.Length - 1] : vertexContracts[i - 1];
-                vertexContracts[i].Next = i == vertexContracts.Length - 1 ? vertexContracts[0] : vertexContracts[i + 1];
-            }
-
-            return vertexContracts;
+            return Array.ConvertAll<Vector3, VertexContract>(vector3s, refer => refer.ToVertexContract(startIndex++));
         }
 
         private float GetIncludeAngle(VertexContract vertex)
