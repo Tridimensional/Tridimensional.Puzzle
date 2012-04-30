@@ -15,8 +15,10 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
             var result = new MeshContract[rows, columns];
+
             var start = sliceContract.Vertexes[0, 0];
-            var range = new Vector2(sliceContract.Vertexes[0, columns].x - start.x, sliceContract.Vertexes[rows, 0].y - start.y);
+            var end = sliceContract.Vertexes[rows, columns];
+            var range = new Vector2(end.x - start.x, end.y - start.y);
 
             for (var i = 0; i < rows; i++)
             {
@@ -27,8 +29,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x, refer.y, 0));
                     var bottomVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x, refer.y, 0.003f));
 
-                    var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0).Link();
-                    var bottomVertexeContracts = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length).Link();
+                    var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0);
+                    var bottomVertexeContracts = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length);
 
                     var upperTriangles = GetTriangles(topVertexeContracts.Copy());
                     var sideTriangles = GetTriangles(topVertexeContracts.Copy(), bottomVertexeContracts.Copy(), Shape.Cylinder);

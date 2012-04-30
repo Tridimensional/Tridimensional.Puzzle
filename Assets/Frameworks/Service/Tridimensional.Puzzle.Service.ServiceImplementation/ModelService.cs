@@ -29,21 +29,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         {
             var rows = Math.Sqrt(1.0 * height / width * count);
             var columns = rows * width / height;
-            var layoutContract = new LayoutContract();
 
+            var layoutContract = new LayoutContract();
             layoutContract.Rows = (int)Math.Ceiling(rows);
             layoutContract.Columns = (int)Math.Ceiling(columns);
-
-            if (width > height)
-            {
-                layoutContract.Width = GlobalConfiguration.PictureRangeInMeter;
-                layoutContract.Height = layoutContract.Width * layoutContract.Rows / layoutContract.Columns;
-            }
-            else
-            {
-                layoutContract.Height = GlobalConfiguration.PictureRangeInMeter;
-                layoutContract.Width = layoutContract.Height * layoutContract.Columns / layoutContract.Rows;
-            }
+            layoutContract.Height = GlobalConfiguration.VisionHeightInMeter;
+            layoutContract.Width = layoutContract.Height * width / height;
 
             return layoutContract;
         }

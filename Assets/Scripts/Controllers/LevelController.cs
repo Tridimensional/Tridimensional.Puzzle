@@ -10,7 +10,6 @@ public class LevelController : MonoBehaviour
 {
     public bool NeedSlideShow = false;
     private float Duration = 2;
-    private Color BackgroundColor;
     private Texture2D MaskTexture;
     private IModelService _modelService;
 
@@ -20,19 +19,12 @@ public class LevelController : MonoBehaviour
 
         GeneratePuzzleModels();
 
-        BackgroundColor = GlobalConfiguration.BackgroundColor;
-
         if (NeedSlideShow)
         {
             MaskTexture = new Texture2D(1, 1);
-            MaskTexture.SetPixels(0, 0, 1, 1, new[] { BackgroundColor });
+            MaskTexture.SetPixels(0, 0, 1, 1, new[] { GlobalConfiguration.BackgroundColor });
             MaskTexture.Apply();
         }
-    }
-
-    void Start()
-    {
-        camera.backgroundColor = Color.black;
     }
 
     void OnGUI()
@@ -47,7 +39,7 @@ public class LevelController : MonoBehaviour
     void GeneratePuzzleModels()
     {
         var backgroundImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
-        var layoutContract = _modelService.GetProperLayout(backgroundImage.width, backgroundImage.height, 100);
+        var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
 
         var sliceContract = _modelService.GetSlice(layoutContract, SliceProgram.Random);
         var meshes = _modelService.GenerateMesh(sliceContract, backgroundImage);
@@ -70,16 +62,18 @@ public class LevelController : MonoBehaviour
 
     Color GetCurrentColor(float duration, float offset)
     {
+        var backgroundColor = GlobalConfiguration.BackgroundColor;
+
         return new Color
         {
-            r = BackgroundColor.r,
-            g = BackgroundColor.g,
-            b = BackgroundColor.b,
-            a = GetCurrentValue(duration, offset, 1, 0)
+            r = backgroundColor.r,
+            g = backgroundColor.g,
+            b = backgroundColor.b,
+            a = GetCurrentAlpha(duration, offset, 1, 0)
         };
     }
 
-    float GetCurrentValue(float duration, float offset, float start, float end)
+    float GetCurrentAlpha(float duration, float offset, float start, float end)
     {
         return start + (end - start) * (float)Math.Pow(offset / duration, 3);
     }
