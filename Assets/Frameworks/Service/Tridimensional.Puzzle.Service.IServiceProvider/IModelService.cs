@@ -11,7 +11,7 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
         LayoutContract GetProperLayout(int width, int height, int count);
         LayoutContract GetProperLayout(int width, int height, GameDifficulty gameDifficulty);
         SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram);
-        MeshContract[,] GenerateMesh(SliceContract sliceContract, Texture2D image);
+        PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image);
     }
 }
 

@@ -15,16 +15,16 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 
         public override Vector2[,] GetVertexes(LayoutContract layoutContract)
         {
-            var vertexes = new Vector2[layoutContract.Rows + 1, layoutContract.Columns + 1];
-            var rows = vertexes.GetLength(0);
-            var columns = vertexes.GetLength(1);
-            var randomScale = layoutContract.Width / layoutContract.Columns / 10f;
+            var rows = layoutContract.Rows + 1;
+            var columns = layoutContract.Columns + 1;
+            var vertexes = new Vector2[rows, columns];
+            var randomRange = layoutContract.Height / layoutContract.Rows / 10f;
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    vertexes[i, j] = new Vector2(1.0f * layoutContract.Width * j / layoutContract.Columns - layoutContract.Width / 2, 1.0f * layoutContract.Height * i / layoutContract.Rows - layoutContract.Height / 2) + GetRandomOffset(j != 0 && j != columns - 1, i != 0 && i != rows - 1, randomScale);
+                    vertexes[i, j] = new Vector2(1.0f * layoutContract.Width * j / layoutContract.Columns, 1.0f * layoutContract.Height * i / layoutContract.Rows) + GetRandomOffset(j != 0 && j != columns - 1, i != 0 && i != rows - 1, randomRange);
                 }
             }
 
@@ -78,14 +78,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return points;
         }
 
-        private Vector2 GetRandomOffset(bool horizontal, bool vertical, float scale)
+        private Vector2 GetRandomOffset(bool horizontal, bool vertical, float range)
         {
-            return new Vector2(horizontal ? GetRandomOffset(scale) : 0f, vertical ? GetRandomOffset(scale) : 0f);
+            return new Vector2(horizontal ? GetRandomOffset(range) : 0f, vertical ? GetRandomOffset(range) : 0f);
         }
 
-        private float GetRandomOffset(float scale)
+        private float GetRandomOffset(float range)
         {
-            return scale * (1f - UnityEngine.Random.value * 2f);
+            return range * (1f - UnityEngine.Random.value * 2f);
         }
     }
 }

@@ -14,15 +14,15 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 
         public override Vector2[,] GetVertexes(LayoutContract layoutContract)
         {
-            var vertexes = new Vector2[layoutContract.Rows + 1, layoutContract.Columns + 1];
-            var rows = vertexes.GetLength(0);
-            var columns = vertexes.GetLength(1);
+            var rows = layoutContract.Rows + 1;
+            var columns = layoutContract.Columns + 1;
+            var vertexes = new Vector2[rows, columns];
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    vertexes[i, j] = new Vector2(1.0f * layoutContract.Width * j / layoutContract.Columns - layoutContract.Width / 2, 1.0f * layoutContract.Height * i / layoutContract.Rows - layoutContract.Height / 2);
+                    vertexes[i, j] = new Vector2(1.0f * layoutContract.Width * j / layoutContract.Columns, 1.0f * layoutContract.Height * i / layoutContract.Rows);
                 }
             }
 

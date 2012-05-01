@@ -10,12 +10,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
     public class ModelService : IModelService
     {
-        IMeshService _meshService;
+        IPieceService _pieceService;
         SliceStrategyFactory _sliceStrategyFactory;
 
-        public ModelService(IMeshService meshService, SliceStrategyFactory sliceStrategyFactory)
+        public ModelService(IPieceService pieceService, SliceStrategyFactory sliceStrategyFactory)
         {
-            _meshService = meshService;
+            _pieceService = pieceService;
             _sliceStrategyFactory = sliceStrategyFactory;
         }
 
@@ -27,7 +27,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         public LayoutContract GetProperLayout(int width, int height, int count)
         {
-            var rows = Math.Sqrt(1.0 * height / width * count);
+            var rows = Mathf.Sqrt(1.0f * height / width * count);
             var columns = rows * width / height;
 
             var layoutContract = new LayoutContract();
@@ -45,7 +45,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return sliceStrategy.GetSlice(layoutContract);
         }
 
-        public MeshContract[,] GenerateMesh(SliceContract sliceContract, Texture2D image)
+        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image)
         {
             var sliceWidth = sliceContract.Vertexes[0, sliceContract.Vertexes.GetLength(1) - 1].x - sliceContract.Vertexes[0, 0].x;
             var sliceHeight = sliceContract.Vertexes[sliceContract.Vertexes.GetLength(0) - 1, 0].y - sliceContract.Vertexes[0, 0].y;
@@ -55,7 +55,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             if (sliceWidth * image.height > sliceHeight * image.width) { mappingOffset.y = (sliceWidth * image.height / image.width - sliceHeight) / 2; }
             else { mappingOffset.x = (sliceHeight * image.width / image.height - sliceWidth) / 2; }
 
-            return _meshService.GenerateMesh(sliceContract, mappingOffset);
+            return _pieceService.GeneratePiece(sliceContract, mappingOffset);
         }
     }
 }
