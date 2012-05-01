@@ -38,42 +38,40 @@ public class LevelController : MonoBehaviour
     private void Animation(PieceViewModel pieceViewModel)
     {
         var piece = pieceViewModel.Object;
-        var row = Convert.ToInt32(piece.name.Substring(7, 3));
-        var column = Convert.ToInt32(piece.name.Substring(11, 3));
-        var reference = pieceViewModel.Position;
-        var position = piece.transform.position;
+        var target = pieceViewModel.Position;
+        var current = piece.transform.position;
 
         if (!pieceViewModel.MovingCompleted)
         {
             var offset = 0.4f * Time.deltaTime;
 
-            if (position.x - reference.x < offset - _flightExcess)
+            if (current.x - target.x < offset - _flightExcess)
             {
-                piece.transform.position = new Vector3(reference.x - _flightExcess, reference.y, -_flightHeight);
+                piece.transform.position = new Vector3(target.x - _flightExcess, target.y, -_flightHeight);
                 pieceViewModel.MovingCompleted = true;
             }
             else
             {
-                piece.transform.position = new Vector3(position.x - offset, position.y, -_flightHeight);
+                piece.transform.position = new Vector3(current.x - offset, current.y, -_flightHeight);
             }
 
-            piece.transform.rotation = Quaternion.Euler(0, -_rotationCoefficient * (piece.transform.position.x - reference.x), 0);
+            piece.transform.rotation = Quaternion.Euler(0, -_rotationCoefficient * (piece.transform.position.x - target.x), 0);
         }
         else if (!pieceViewModel.LandingCompleted)
         {
-            var offset = 0.1f * Time.deltaTime;
+            var offset = 0.05f * Time.deltaTime;
 
-            if (reference.x - position.x < offset)
+            if (target.x - current.x < offset)
             {
-                piece.transform.position = reference;
+                piece.transform.position = target;
                 pieceViewModel.LandingCompleted = true;
             }
             else
             {
-                piece.transform.position = new Vector3(position.x + offset, position.y, _flightExcess / _flightHeight * offset);
+                piece.transform.position = new Vector3(current.x + offset, current.y, current.z + _flightExcess / _flightHeight * offset);
             }
 
-            piece.transform.rotation = Quaternion.Euler(0, +_rotationCoefficient * (piece.transform.position.x - reference.x), 0);
+            piece.transform.rotation = Quaternion.Euler(0, _rotationCoefficient * (piece.transform.position.x - target.x), 0);
         }
     }
 
@@ -87,11 +85,12 @@ public class LevelController : MonoBehaviour
 
         var rows = pieceContracts.GetLength(0);
         var columns = pieceContracts.GetLength(1);
+        var unitRange = layoutContract.Height / layoutContract.Rows;
 
         _pieceViewModels = new PieceViewModel[rows, columns];
-        _flightHeight = layoutContract.Height / layoutContract.Rows;
-        _flightExcess = layoutContract.Height / layoutContract.Rows;
-        _rotationCoefficient = 60 / _flightExcess;
+        _flightHeight = unitRange;
+        _flightExcess = unitRange;
+        _rotationCoefficient = 180 / _flightExcess;
 
         for (var i = 0; i < rows; i++)
         {
@@ -108,7 +107,7 @@ public class LevelController : MonoBehaviour
 
                 go.tag = "Piece";
                 go.transform.position = pieceContracts[i, j].Position;
-                go.transform.position += new Vector3(4 * (layoutContract.Width / 2f - go.transform.position.x + UnityEngine.Random.value * _flightExcess), 0, 0);
+                go.transform.position += new Vector3(8 * (layoutContract.Width / 2f - go.transform.position.x + UnityEngine.Random.value * unitRange), 0, 0);
 
                 _pieceViewModels[i, j] = new PieceViewModel { Object = go, Position = pieceContracts[i, j].Position, MovingCompleted = false, LandingCompleted = false };
             }
