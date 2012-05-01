@@ -28,8 +28,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     var vertexes = GetVertexes(sliceContract, i, j);
                     var center = new Vector2(range.x * (2 * j + 1f) / (2 * columns), range.y * (2 * i + 1f) / (2 * rows));
 
-                    var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceHeightInMeter / 2));
-                    var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceHeightInMeter));
+                    var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThicknessInMeter / 2));
+                    var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThicknessInMeter));
 
                     var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0);
                     var bottomVertexeContracts = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length);

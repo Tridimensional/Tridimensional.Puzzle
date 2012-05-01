@@ -5,7 +5,8 @@ public class CameraController : MonoBehaviour
 {
     void Start()
     {
-        camera.backgroundColor = GlobalConfiguration.BackgroundColor;
-        camera.transform.position = new Vector3(0, 0, -(GlobalConfiguration.VisionHeightInMeter / 2) / Mathf.Tan(camera.fieldOfView / 2 * Mathf.PI / 180));
+        gameObject.camera.nearClipPlane = 0.1f;
+        gameObject.camera.backgroundColor = GlobalConfiguration.BackgroundColor;
+        gameObject.camera.transform.position = new Vector3(0, 0, -(GlobalConfiguration.VisionHeightInMeter / 2) / Mathf.Tan(camera.fieldOfView / 2 * Mathf.PI / 180));
     }
 }

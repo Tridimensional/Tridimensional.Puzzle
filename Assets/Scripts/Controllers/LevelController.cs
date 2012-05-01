@@ -1,15 +1,18 @@
 ﻿using System;
 using Tridimensional.Puzzle.Foundation.Enumeration;
-using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy;
+using Tridimensional.Puzzle.UI.ViewModel;
 using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
     IModelService _modelService;
-    PieceContract[,] _pieceContracts;
+    PieceViewModel[,] _pieceViewModels;
+    float _flightHeight;
+    float _flightExcess;
+    float _rotationCoefficient;
 
     void Awake()
     {
@@ -20,22 +23,57 @@ public class LevelController : MonoBehaviour
 
     void Update()
     {
-        var pieces = GameObject.FindGameObjectsWithTag("Piece");
+        var rows = _pieceViewModels.GetLength(0);
+        var columns = _pieceViewModels.GetLength(1);
 
-        foreach (var piece in pieces)
+        for (var i = 0; i < rows; i++)
         {
-            var row = Convert.ToInt32(piece.name.Substring(7, 3));
-            var column = Convert.ToInt32(piece.name.Substring(11, 3));
-            var distance = Vector3.Distance(piece.transform.position, _pieceContracts[row, column].Position);
-
-            if (piece.transform.position.x - _pieceContracts[row, column].Position.x < 0.01)
+            for (var j = 0; j < columns; j++)
             {
-                piece.transform.position = _pieceContracts[row, column].Position;
+                Animation(_pieceViewModels[i, j]);
+            }
+        }
+    }
+
+    private void Animation(PieceViewModel pieceViewModel)
+    {
+        var piece = pieceViewModel.Object;
+        var row = Convert.ToInt32(piece.name.Substring(7, 3));
+        var column = Convert.ToInt32(piece.name.Substring(11, 3));
+        var reference = pieceViewModel.Position;
+        var position = piece.transform.position;
+
+        if (!pieceViewModel.MovingCompleted)
+        {
+            var offset = 0.4f * Time.deltaTime;
+
+            if (position.x - reference.x < offset - _flightExcess)
+            {
+                piece.transform.position = new Vector3(reference.x - _flightExcess, reference.y, -_flightHeight);
+                pieceViewModel.MovingCompleted = true;
             }
             else
             {
-                piece.transform.position -= new Vector3(0.3f * Time.deltaTime, 0, 0);
+                piece.transform.position = new Vector3(position.x - offset, position.y, -_flightHeight);
             }
+
+            piece.transform.rotation = Quaternion.Euler(0, -_rotationCoefficient * (piece.transform.position.x - reference.x), 0);
+        }
+        else if (!pieceViewModel.LandingCompleted)
+        {
+            var offset = 0.1f * Time.deltaTime;
+
+            if (reference.x - position.x < offset)
+            {
+                piece.transform.position = reference;
+                pieceViewModel.LandingCompleted = true;
+            }
+            else
+            {
+                piece.transform.position = new Vector3(position.x + offset, position.y, _flightExcess / _flightHeight * offset);
+            }
+
+            piece.transform.rotation = Quaternion.Euler(0, +_rotationCoefficient * (piece.transform.position.x - reference.x), 0);
         }
     }
 
@@ -47,9 +85,17 @@ public class LevelController : MonoBehaviour
         var sliceContract = _modelService.GetSlice(layoutContract, SliceProgram.Random);
         var pieceContracts = _modelService.GeneratePiece(sliceContract, backgroundImage);
 
-        for (var i = 0; i < pieceContracts.GetLength(0); i++)
+        var rows = pieceContracts.GetLength(0);
+        var columns = pieceContracts.GetLength(1);
+
+        _pieceViewModels = new PieceViewModel[rows, columns];
+        _flightHeight = layoutContract.Height / layoutContract.Rows;
+        _flightExcess = layoutContract.Height / layoutContract.Rows;
+        _rotationCoefficient = 60 / _flightExcess;
+
+        for (var i = 0; i < rows; i++)
         {
-            for (var j = 0; j < pieceContracts.GetLength(1); j++)
+            for (var j = 0; j < columns; j++)
             {
                 var go = new GameObject(string.Format("Piece <{0:000},{1:000}>", i, j));
                 go.AddComponent<MeshFilter>().mesh = pieceContracts[i, j].BackseatMesh;
@@ -62,10 +108,10 @@ public class LevelController : MonoBehaviour
 
                 go.tag = "Piece";
                 go.transform.position = pieceContracts[i, j].Position;
-                go.transform.position += new Vector3(3 * (layoutContract.Width / 2f - go.transform.position.x) + 0.5f + UnityEngine.Random.value * 0.2f, 0, 0);
+                go.transform.position += new Vector3(4 * (layoutContract.Width / 2f - go.transform.position.x + UnityEngine.Random.value * _flightExcess), 0, 0);
+
+                _pieceViewModels[i, j] = new PieceViewModel { Object = go, Position = pieceContracts[i, j].Position, MovingCompleted = false, LandingCompleted = false };
             }
         }
-
-        _pieceContracts = pieceContracts;
     }
 }
