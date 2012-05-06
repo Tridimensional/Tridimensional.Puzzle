@@ -19,24 +19,38 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             _sliceStrategyFactory = sliceStrategyFactory;
         }
 
-        public LayoutContract GetProperLayout(int width, int height, GameDifficulty gameDifficulty)
+        public LayoutContract GetProperLayout(Texture2D image, GameDifficulty gameDifficulty)
+        {
+            var puzzleCount = gameDifficulty.ToProperPuzzleCount();
+            return GetProperLayout(image, puzzleCount);
+        }
+
+        public LayoutContract GetProperLayout(Texture2D image, int count)
+        {
+            var width = image.width > image.height ? GlobalConfiguration.PictureScaleInMeter * image.width / image.height : GlobalConfiguration.PictureScaleInMeter;
+            var height = image.width > image.height ? GlobalConfiguration.PictureScaleInMeter : GlobalConfiguration.PictureScaleInMeter * image.height / image.width;
+
+            return GetProperLayout(width, height, count);
+        }
+
+        public LayoutContract GetProperLayout(float width, float height, GameDifficulty gameDifficulty)
         {
             var puzzleCount = gameDifficulty.ToProperPuzzleCount();
             return GetProperLayout(width, height, puzzleCount);
         }
 
-        public LayoutContract GetProperLayout(int width, int height, int count)
+        public LayoutContract GetProperLayout(float width, float height, int count)
         {
             var rows = Mathf.Sqrt(1.0f * height / width * count);
             var columns = rows * width / height;
 
-            var layoutContract = new LayoutContract();
-            layoutContract.Rows = (int)Math.Ceiling(rows);
-            layoutContract.Columns = (int)Math.Ceiling(columns);
-            layoutContract.Height = GlobalConfiguration.VisionHeightInMeter;
-            layoutContract.Width = layoutContract.Height * width / height;
-
-            return layoutContract;
+            return new LayoutContract
+            {
+                Rows = (int)Math.Ceiling(rows),
+                Columns = (int)Math.Ceiling(columns),
+                Height = height,
+                Width = width
+            };
         }
 
         public SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram)
