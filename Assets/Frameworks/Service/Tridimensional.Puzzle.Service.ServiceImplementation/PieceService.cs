@@ -43,9 +43,11 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     pieceContract.MappingMesh.vertices = topVertexes;
                     pieceContract.MappingMesh.triangles = GetTriangles(upperTriangles);
                     pieceContract.MappingMesh.uv = GetUVs(vertexes, mappingOffset, start, range);
+                    pieceContract.MappingMesh.RecalculateNormals();
 
                     pieceContract.BackseatMesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
                     pieceContract.BackseatMesh.triangles = GetTriangles(sideTriangles, bottomTriangles);
+                    pieceContract.MappingMesh.RecalculateNormals();
 
                     result[i, j] = pieceContract;
                 }
