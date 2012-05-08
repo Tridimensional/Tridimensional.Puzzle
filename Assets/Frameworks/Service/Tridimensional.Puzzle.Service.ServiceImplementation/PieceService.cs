@@ -47,8 +47,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
                     pieceContract.BackseatMesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
                     pieceContract.BackseatMesh.triangles = GetTriangles(sideTriangles, bottomTriangles);
-                    pieceContract.BackseatMesh.uv = GetUVs(pieceContract.BackseatMesh.vertices.Length);
-                    pieceContract.BackseatMesh.RecalculateNormals();
+                    pieceContract.BackseatMesh.normals = GetNormals(pieceContract.BackseatMesh.vertices.Length);
 
                     result[i, j] = pieceContract;
                 }
@@ -81,18 +80,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return vertexes.ToArray();
         }
 
-        private Vector2[] GetUVs(int length)
-        {
-            var vectors = new Vector2[length];
-
-            for (var i = 0; i < length; i++)
-            {
-                vectors[i] = new Vector2();
-            }
-
-            return vectors;
-        }
-
         private Vector2[] GetUVs(Vector2[] vertexes, Vector2 offset, Vector2 start, Vector2 range)
         {
             var vectors = new Vector2[vertexes.Length];
@@ -103,6 +90,13 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             }
 
             return vectors;
+        }
+
+        private Vector3[] GetNormals(int length)
+        {
+            var normals = new Vector3[length];
+            for (var i = 0; i < length; i++) { normals[i] = new Vector3(0, 0, 1); }
+            return normals;
         }
 
         private Vector3[] GetVertexes(params VertexContract[][] vertexes)
