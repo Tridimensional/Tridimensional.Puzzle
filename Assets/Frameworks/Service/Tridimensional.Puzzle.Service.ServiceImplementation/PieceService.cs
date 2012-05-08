@@ -47,7 +47,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
                     pieceContract.BackseatMesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
                     pieceContract.BackseatMesh.triangles = GetTriangles(sideTriangles, bottomTriangles);
-                    pieceContract.MappingMesh.RecalculateNormals();
+                    pieceContract.BackseatMesh.uv = GetUVs(pieceContract.BackseatMesh.vertices.Length);
+                    pieceContract.BackseatMesh.RecalculateNormals();
 
                     result[i, j] = pieceContract;
                 }
@@ -80,11 +81,23 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return vertexes.ToArray();
         }
 
+        private Vector2[] GetUVs(int length)
+        {
+            var vectors = new Vector2[length];
+
+            for (var i = 0; i < length; i++)
+            {
+                vectors[i] = new Vector2();
+            }
+
+            return vectors;
+        }
+
         private Vector2[] GetUVs(Vector2[] vertexes, Vector2 offset, Vector2 start, Vector2 range)
         {
             var vectors = new Vector2[vertexes.Length];
 
-            for (int i = 0; i < vertexes.Length; i++)
+            for (var i = 0; i < vertexes.Length; i++)
             {
                 vectors[i] = new Vector2((vertexes[i].x + offset.x - start.x) / (range.x + offset.x * 2), (vertexes[i].y + offset.y - start.y) / (range.y + offset.y * 2));
             }

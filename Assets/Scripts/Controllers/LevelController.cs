@@ -118,7 +118,7 @@ public class LevelController : MonoBehaviour
         go.transform.position = position;
 
         var mapping = new GameObject("Mapping");
-        var mesh = mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
+        mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
         mapping.AddComponent<MeshRenderer>().material.mainTexture = image;
         mapping.transform.parent = go.transform;
         mapping.transform.localPosition = new Vector3(0, 0, 0);
