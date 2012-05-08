@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
-	public interface IMeshService
+	public interface IPieceService
 	{
-        Mesh[,] GenerateMesh(SliceContract sliceContract);
+        PieceContract[,] GeneratePiece(SliceContract sliceContract, Vector2 mappingOffset);
     }
 }

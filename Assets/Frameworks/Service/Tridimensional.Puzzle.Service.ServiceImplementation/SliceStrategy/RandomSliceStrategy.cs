@@ -6,25 +6,25 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
     public class RandomSliceStrategy : AbstractSliceStrategy
     {
-        public override SliceContract GetSlice(FormationContract formationContract)
+        public override SliceContract GetSlice(LayoutContract layoutContract)
         {
-            var vertexes = GetVertexes(formationContract);
+            var vertexes = GetVertexes(layoutContract);
             var lines = GetLines(vertexes);
             return new SliceContract { Vertexes = vertexes, Lines = lines };
         }
 
-        public override Vector2[,] GetVertexes(FormationContract formation)
+        public override Vector2[,] GetVertexes(LayoutContract layoutContract)
         {
-            var vertexes = new Vector2[formation.Rows + 1, formation.Columns + 1];
-            var rows = vertexes.GetLength(0);
-            var columns = vertexes.GetLength(1);
-            var randomScale = formation.Width / formation.Columns / 10;
+            var rows = layoutContract.Rows + 1;
+            var columns = layoutContract.Columns + 1;
+            var vertexes = new Vector2[rows, columns];
+            var randomRange = layoutContract.Height / layoutContract.Rows / 10f;
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    vertexes[i, j] = new Vector2(1.0f * formation.Width * j / formation.Columns - formation.Width / 2, 1.0f * formation.Height * i / formation.Rows - formation.Height / 2) + GetRandomOffset(j != 0 && j != columns - 1, i != 0 && i != rows - 1, randomScale);
+                    vertexes[i, j] = new Vector2(1.0f * layoutContract.Width * j / layoutContract.Columns, 1.0f * layoutContract.Height * i / layoutContract.Rows) + GetRandomOffset(j != 0 && j != columns - 1, i != 0 && i != rows - 1, randomRange);
                 }
             }
 
@@ -78,14 +78,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return points;
         }
 
-        private Vector2 GetRandomOffset(bool horizontal, bool vertical, float scale)
+        private Vector2 GetRandomOffset(bool horizontal, bool vertical, float range)
         {
-            return new Vector2(horizontal ? GetRandomOffset(scale) : 0f, vertical ? GetRandomOffset(scale) : 0f);
+            return new Vector2(horizontal ? GetRandomOffset(range) : 0f, vertical ? GetRandomOffset(range) : 0f);
         }
 
-        private float GetRandomOffset(float scale)
+        private float GetRandomOffset(float range)
         {
-            return scale * (1f - UnityEngine.Random.value * 2f);
+            return range * (1f - UnityEngine.Random.value * 2f);
         }
     }
 }

@@ -3,6 +3,8 @@ ProjectSettings
 Properties
 Temp
 ScriptAssemblies
+assetDatabase3
+expandedItems
 *.sln
 *.pidb
 *.userprefs

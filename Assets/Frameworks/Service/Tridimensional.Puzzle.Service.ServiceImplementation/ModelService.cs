@@ -10,53 +10,66 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
     public class ModelService : IModelService
     {
-        IMeshService _meshService;
+        IPieceService _pieceService;
         SliceStrategyFactory _sliceStrategyFactory;
 
-        public ModelService(IMeshService meshService, SliceStrategyFactory sliceStrategyFactory)
+        public ModelService(IPieceService pieceService, SliceStrategyFactory sliceStrategyFactory)
         {
-            _meshService = meshService;
+            _pieceService = pieceService;
             _sliceStrategyFactory = sliceStrategyFactory;
         }
 
-        public FormationContract GetProperFormation(int width, int height, GameDifficulty gameDifficulty)
+        public LayoutContract GetProperLayout(Texture2D image, GameDifficulty gameDifficulty)
         {
             var puzzleCount = gameDifficulty.ToProperPuzzleCount();
-            return GetProperFormation(width, height, puzzleCount);
+            return GetProperLayout(image, puzzleCount);
         }
 
-        public FormationContract GetProperFormation(int width, int height, int count)
+        public LayoutContract GetProperLayout(Texture2D image, int count)
         {
-            var rows = Math.Sqrt(1.0 * height / width * count);
-            var columns = rows * width / height;
-            var formation = new FormationContract();
+            var width = image.width > image.height ? GlobalConfiguration.PictureScaleInMeter * image.width / image.height : GlobalConfiguration.PictureScaleInMeter;
+            var height = image.width > image.height ? GlobalConfiguration.PictureScaleInMeter : GlobalConfiguration.PictureScaleInMeter * image.height / image.width;
 
-            formation.Rows = (int)Math.Ceiling(rows);
-            formation.Columns = (int)Math.Ceiling(columns);
-
-            if (width > height)
-            {
-                formation.Width = GlobalConfiguration.PictureRangeInMeter;
-                formation.Height = formation.Width * formation.Rows / formation.Columns;
-            }
-            else
-            {
-                formation.Height = GlobalConfiguration.PictureRangeInMeter;
-                formation.Width = formation.Height * formation.Columns / formation.Rows;
-            }
-
-            return formation;
+            return GetProperLayout(width, height, count);
         }
 
-        public SliceContract GetSlice(FormationContract formationContract, SliceProgram sliceProgram)
+        public LayoutContract GetProperLayout(float width, float height, GameDifficulty gameDifficulty)
+        {
+            var puzzleCount = gameDifficulty.ToProperPuzzleCount();
+            return GetProperLayout(width, height, puzzleCount);
+        }
+
+        public LayoutContract GetProperLayout(float width, float height, int count)
+        {
+            var rows = Mathf.Sqrt(1.0f * height / width * count);
+            var columns = rows * width / height;
+
+            return new LayoutContract
+            {
+                Rows = (int)Math.Ceiling(rows),
+                Columns = (int)Math.Ceiling(columns),
+                Height = height,
+                Width = width
+            };
+        }
+
+        public SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram)
         {
             var sliceStrategy = _sliceStrategyFactory.Create(sliceProgram);
-            return sliceStrategy.GetSlice(formationContract);
+            return sliceStrategy.GetSlice(layoutContract);
         }
 
-        public Mesh[,] GenerateMesh(SliceContract sliceContract)
+        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image)
         {
-            return _meshService.GenerateMesh(sliceContract);
+            var sliceWidth = sliceContract.Vertexes[0, sliceContract.Vertexes.GetLength(1) - 1].x - sliceContract.Vertexes[0, 0].x;
+            var sliceHeight = sliceContract.Vertexes[sliceContract.Vertexes.GetLength(0) - 1, 0].y - sliceContract.Vertexes[0, 0].y;
+
+            var mappingOffset = new Vector2(0, 0);
+
+            if (sliceWidth * image.height > sliceHeight * image.width) { mappingOffset.y = (sliceWidth * image.height / image.width - sliceHeight) / 2; }
+            else { mappingOffset.x = (sliceHeight * image.width / image.height - sliceWidth) / 2; }
+
+            return _pieceService.GeneratePiece(sliceContract, mappingOffset);
         }
     }
 }

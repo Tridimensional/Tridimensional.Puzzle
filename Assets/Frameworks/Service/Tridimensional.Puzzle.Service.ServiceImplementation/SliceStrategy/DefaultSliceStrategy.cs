@@ -5,24 +5,24 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
     public class DefaultSliceStrategy : AbstractSliceStrategy
 	{
-        public override SliceContract GetSlice(FormationContract formationContract)
+        public override SliceContract GetSlice(LayoutContract layoutContract)
         {
-            var vertexes = GetVertexes(formationContract);
+            var vertexes = GetVertexes(layoutContract);
             var lines = GetLines(vertexes);
             return new SliceContract { Vertexes = vertexes, Lines = lines };
         }
 
-        public override Vector2[,] GetVertexes(FormationContract formation)
+        public override Vector2[,] GetVertexes(LayoutContract layoutContract)
         {
-            var vertexes = new Vector2[formation.Rows + 1, formation.Columns + 1];
-            var rows = vertexes.GetLength(0);
-            var columns = vertexes.GetLength(1);
+            var rows = layoutContract.Rows + 1;
+            var columns = layoutContract.Columns + 1;
+            var vertexes = new Vector2[rows, columns];
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    vertexes[i, j] = new Vector2(1.0f * formation.Width * j / formation.Columns - formation.Width / 2, 1.0f * formation.Height * i / formation.Rows - formation.Height / 2);
+                    vertexes[i, j] = new Vector2(1.0f * layoutContract.Width * j / layoutContract.Columns, 1.0f * layoutContract.Height * i / layoutContract.Rows);
                 }
             }
 

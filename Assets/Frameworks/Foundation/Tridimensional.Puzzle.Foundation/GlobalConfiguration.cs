@@ -6,6 +6,8 @@ namespace Tridimensional.Puzzle.Foundation
 	public class GlobalConfiguration
 	{
         public static Color BackgroundColor { get { return new Color32(0xff, 0xff, 0xff, 0xff); } }
-        public static float PictureRangeInMeter { get { return 0.85f; } }
+        public static float PictureScaleInMeter { get { return 0.5f; } }
+        public static float PieceThicknessInMeter { get { return 0.005f; } }
+        public static float CameraToSubjectInMeter { get { return 0.8f; } }
 	}
 }

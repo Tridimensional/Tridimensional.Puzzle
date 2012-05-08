@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tridimensional.Puzzle.Foundation;
 using Tridimensional.Puzzle.Foundation.Enumeration;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;
@@ -8,43 +9,57 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
-	public class MeshService : IMeshService
+	public class PieceService : IPieceService
     {
-		//total width of puzzle
-		private float pzWidth;
-		//total height of puzzle
-		private float pzHeight;
-		//start x of puzzle
-		private float startX;
-		//start y of puzzle
-		private float startY;
-		
-        public Mesh[,] GenerateMesh(SliceContract sliceContract)
+        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Vector2 mappingOffset)
         {
-			pzWidth = sliceContract.Vertexes[0,sliceContract.Vertexes.GetLength(1) - 1].x - sliceContract.Vertexes[0,0].x;
-			pzHeight = sliceContract.Vertexes[sliceContract.Vertexes.GetLength(0) - 1,0].y - sliceContract.Vertexes[0,0].y;
-			startX = sliceContract.Vertexes[0,0].x;
-			startY = sliceContract.Vertexes[0,0].y;
-			
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
-            var result = new Mesh[rows, columns];
+            var result = new PieceContract[rows, columns];
+
+            var start = sliceContract.Vertexes[0, 0];
+            var end = sliceContract.Vertexes[rows, columns];
+            var range = new Vector2(end.x - start.x, end.y - start.y);
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    result[i, j] = GenerateMesh(sliceContract, i, j);
+                    var vertexes = GetVertexes(sliceContract, i, j);
+                    var center = new Vector2(range.x * (2 * j + 1f) / (2 * columns), range.y * (2 * i + 1f) / (2 * rows));
+
+                    var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThicknessInMeter / 2));
+                    var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThicknessInMeter));
+
+                    var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0);
+                    var bottomVertexeContracts = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length);
+
+                    var upperTriangles = GetTriangles(topVertexeContracts.Copy());
+                    var sideTriangles = GetTriangles(topVertexeContracts.Copy(), bottomVertexeContracts.Copy(), Shape.Cylinder);
+                    var bottomTriangles = GetTriangles(bottomVertexeContracts.Copy(), true);
+
+                    var pieceContract = new PieceContract { MappingMesh = new Mesh(), BackseatMesh = new Mesh(), Position = center - range / 2 };
+
+                    pieceContract.MappingMesh.vertices = topVertexes;
+                    pieceContract.MappingMesh.triangles = GetTriangles(upperTriangles);
+                    pieceContract.MappingMesh.uv = GetUVs(vertexes, mappingOffset, start, range);
+                    pieceContract.MappingMesh.RecalculateNormals();
+
+                    pieceContract.BackseatMesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
+                    pieceContract.BackseatMesh.triangles = GetTriangles(sideTriangles, bottomTriangles);
+                    pieceContract.MappingMesh.RecalculateNormals();
+
+                    result[i, j] = pieceContract;
                 }
             }
 
             return result;
         }
 
-        private Mesh GenerateMesh(SliceContract sliceContract, int x, int y)
+        private Vector2[] GetVertexes(SliceContract sliceContract, int x, int y)
         {
-            var vertexes = new List<Vector2>();
             var points = null as Vector2[];
+            var vertexes = new List<Vector2>();
 
             vertexes.Add(sliceContract.Vertexes[x, y]);
             points = sliceContract.Lines[x, y, x + 1, y];
@@ -62,40 +77,20 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             points = VectorUtility.Reverse(sliceContract.Lines[x, y, x, y + 1]);
             if (points != null) { foreach (var p in points) { vertexes.Add(p); } }
 
-            return GenerateMesh(vertexes.ToArray());
+            return vertexes.ToArray();
         }
 
-        private Mesh GenerateMesh(Vector2[] vertexes)
+        private Vector2[] GetUVs(Vector2[] vertexes, Vector2 offset, Vector2 start, Vector2 range)
         {
-            var mesh = new Mesh();
+            var vectors = new Vector2[vertexes.Length];
 
-            var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x, refer.y, 0));
-            var bottomVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x, refer.y, 0.003f));
+            for (int i = 0; i < vertexes.Length; i++)
+            {
+                vectors[i] = new Vector2((vertexes[i].x + offset.x - start.x) / (range.x + offset.x * 2), (vertexes[i].y + offset.y - start.y) / (range.y + offset.y * 2));
+            }
 
-            var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0);
-            var bottomVertexeContract = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length);
-
-            var upperTriangles = GetTriangles(topVertexeContracts.Copy());
-            var sideTriangles = GetTriangles(topVertexeContracts.Copy(), bottomVertexeContract.Copy(), Shape.Cylinder);
-            var bottomTriangles = GetTriangles(bottomVertexeContract.Copy(), true);
-
-            mesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContract);
-            mesh.triangles = GetTriangles(upperTriangles, sideTriangles, bottomTriangles);
-			mesh.uv = GetUVs(topVertexeContracts,bottomVertexeContract.Length);
-			
-            return mesh;
+            return vectors;
         }
-		
-		private Vector2[] GetUVs(VertexContract[] vertexes,int backVertexCount)
-		{
-			Vector2[] UVValue = new Vector2[vertexes.Length + backVertexCount];
-			for(int i=0; i < vertexes.Length; i++)
-			{
-				UVValue[i] = new Vector2((vertexes[i].x - startX)/pzWidth,(vertexes[i].y - startY)/pzHeight);
-			}
-			
-			return UVValue;
-		}
 
         private Vector3[] GetVertexes(params VertexContract[][] vertexes)
         {
@@ -186,9 +181,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 triangles.Add(pointer1.Index);
                 triangles.Add(pointer2.Index);
                 triangles.Add(pointer1.Next.Index);
+                triangles.Add(pointer1.Next.Index);
                 triangles.Add(pointer2.Index);
                 triangles.Add(pointer2.Next.Index);
-                triangles.Add(pointer1.Next.Index);
 
                 pointer1 = pointer1.Next;
                 pointer2 = pointer2.Next;
@@ -197,24 +192,16 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             triangles.Add(pointer1.Index);
             triangles.Add(pointer2.Index);
             triangles.Add(pointer1.Next.Index);
+            triangles.Add(pointer1.Next.Index);
             triangles.Add(pointer2.Index);
             triangles.Add(pointer2.Next.Index);
-            triangles.Add(pointer1.Next.Index);
 
             return triangles;
         }
 
         private VertexContract[] ConvertToVertexContracts(Vector3[] vector3s, int startIndex)
         {
-            var vertexContracts = Array.ConvertAll<Vector3, VertexContract>(vector3s, refer => refer.ToVertexContract(startIndex++));
-
-            for (var i = 0; i < vertexContracts.Length; i++)
-            {
-                vertexContracts[i].Previous = i == 0 ? vertexContracts[vertexContracts.Length - 1] : vertexContracts[i - 1];
-                vertexContracts[i].Next = i == vertexContracts.Length - 1 ? vertexContracts[0] : vertexContracts[i + 1];
-            }
-
-            return vertexContracts;
+            return Array.ConvertAll<Vector3, VertexContract>(vector3s, refer => refer.ToVertexContract(startIndex++));
         }
 
         private float GetIncludeAngle(VertexContract vertex)

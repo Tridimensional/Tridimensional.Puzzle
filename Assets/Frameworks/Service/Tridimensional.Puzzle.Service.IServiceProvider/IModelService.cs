@@ -8,10 +8,12 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
 	public interface IModelService
 	{
-        FormationContract GetProperFormation(int width, int height, int count);
-        FormationContract GetProperFormation(int width, int height, GameDifficulty gameDifficulty);
-        SliceContract GetSlice(FormationContract formationContract, SliceProgram sliceProgram);
-        Mesh[,] GenerateMesh(SliceContract sliceContract);
+        LayoutContract GetProperLayout(float width, float height, int count);
+        LayoutContract GetProperLayout(float width, float height, GameDifficulty gameDifficulty);
+        LayoutContract GetProperLayout(Texture2D image, int count);
+        LayoutContract GetProperLayout(Texture2D image, GameDifficulty gameDifficulty);
+        SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram);
+        PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image);
     }
 }
 

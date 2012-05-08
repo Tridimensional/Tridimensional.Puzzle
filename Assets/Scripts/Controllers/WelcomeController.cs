@@ -5,31 +5,31 @@ using UnityEngine;
 
 public class WelcomeController : MonoBehaviour
 {
-    private float Duration = 3f;
-    private Texture2D LogoTexture;
-    private Rect LogoTextureRect;
-    private Color BackgroundColor;
+    float _duration = 3f;
+    Texture2D _logoTexture;
+    Rect _logoTextureRect;
+    Color _backgroundColor;
 
     void Awake()
     {
-        LogoTexture = Resources.Load("Logo/Logo") as Texture2D;
-        LogoTextureRect = GetCompatibleLogoRect();
-        BackgroundColor = GlobalConfiguration.BackgroundColor;
+        _logoTexture = Resources.Load("Logo/Logo") as Texture2D;
+        _logoTextureRect = GetCompatibleLogoRect();
+        _backgroundColor = GlobalConfiguration.BackgroundColor;
     }
 
     void Start()
     {
-        camera.backgroundColor = BackgroundColor;
+        camera.backgroundColor = _backgroundColor;
     }
 
     void OnGUI()
     {
-        var stillness = Duration * 1 / 3;
+        var stillness = _duration * 1 / 3;
 
-        GUI.color = Time.time < stillness ? BackgroundColor : new Color(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, GetCurrentValue(Duration - stillness, Time.time - stillness, 1, 0));
-        GUI.DrawTexture(LogoTextureRect, LogoTexture);
+        GUI.color = Time.time < stillness ? _backgroundColor : new Color(_backgroundColor.r, _backgroundColor.g, _backgroundColor.b, GetCurrentValue(_duration - stillness, Time.time - stillness, 1, 0));
+        GUI.DrawTexture(_logoTextureRect, _logoTexture);
 
-        if (Time.time > Duration)
+        if (Time.time > _duration)
         {
             Application.LoadLevel(LevelName.ModeSelection.ToString());
         }
@@ -42,6 +42,6 @@ public class WelcomeController : MonoBehaviour
 
     Rect GetCompatibleLogoRect()
     {
-        return new Rect((Screen.width - LogoTexture.width) / 2, (Screen.height - LogoTexture.height) / 2, LogoTexture.width, LogoTexture.height);
+        return new Rect((Screen.width - _logoTexture.width) / 2, (Screen.height - _logoTexture.height) / 2, _logoTexture.width, _logoTexture.height);
     }
 }
