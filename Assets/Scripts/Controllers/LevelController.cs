@@ -114,7 +114,7 @@ public class LevelController : MonoBehaviour
     {
         var go = new GameObject(name);
         go.AddComponent<MeshFilter>().mesh = backseatMesh;
-        go.AddComponent<MeshRenderer>().material.color = Color.white;
+        go.AddComponent<MeshRenderer>().material.color = new Color32(0xf0, 0xf0, 0xf0, 0xff);
         go.transform.position = position;
 
         var mapping = new GameObject("Mapping");
