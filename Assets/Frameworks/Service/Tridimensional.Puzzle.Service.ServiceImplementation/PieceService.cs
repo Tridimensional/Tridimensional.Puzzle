@@ -95,7 +95,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         private Vector3[] GetNormals(int length)
         {
             var normals = new Vector3[length];
-            for (var i = 0; i < length; i++) { normals[i] = new Vector3(0, 0, 1); }
+            for (var i = 0; i < length; i++) { normals[i] = new Vector3(0, 0, 0.5f); }
             return normals;
         }
 
