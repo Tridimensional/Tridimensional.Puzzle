@@ -114,7 +114,7 @@ public class LevelController : MonoBehaviour
     {
         var go = new GameObject(name);
         go.AddComponent<MeshFilter>().mesh = backseatMesh;
-        go.AddComponent<MeshRenderer>().material.color = new Color32(0xf0, 0xf0, 0xf0, 0xff);
+        go.AddComponent<MeshRenderer>().material.color = new Color32(0x91, 0x91, 0x81, 0xff);
         go.transform.position = position;
 
         var mapping = new GameObject("Mapping");
@@ -128,6 +128,6 @@ public class LevelController : MonoBehaviour
 
     string GenerateBackdropPieceName(int row, int column)
     {
-        return string.Format("Backdrop <{0:000},{1:000}>", row, column);
+        return string.Format("Piece <{0:000},{1:000}>", row, column);
     }
 }
