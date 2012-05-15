@@ -2,9 +2,7 @@ obj
 ProjectSettings
 Properties
 Temp
-ScriptAssemblies
-assetDatabase3
-expandedItems
+Library
 *.sln
 *.pidb
 *.userprefs
