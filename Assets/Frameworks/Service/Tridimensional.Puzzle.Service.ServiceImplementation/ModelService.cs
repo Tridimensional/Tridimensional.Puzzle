@@ -71,5 +71,10 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             return _pieceService.GeneratePiece(sliceContract, mappingOffset);
         }
+
+        public Texture2D GenerateNormalMap(SliceContract sliceContract, Texture2D image)
+        {
+            return null;
+        }
     }
 }

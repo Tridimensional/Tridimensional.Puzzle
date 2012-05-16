@@ -12,7 +12,7 @@ public class LevelController : MonoBehaviour
 {
     IModelService _modelService;
     Texture2D _backdropImage;
-    Texture2D _normalMap;
+    Texture2D _backdropNormalMap;
     LayoutContract _backdropLayoutContract;
     BackdropPieceViewModel[,] _backdropPieceViewModels;
     float _pieceWidth;
@@ -36,7 +36,7 @@ public class LevelController : MonoBehaviour
         var sliceContract = _modelService.GetSlice(_backdropLayoutContract, SliceProgram.Random);
         var pieceContracts = _modelService.GeneratePiece(sliceContract, _backdropImage);
 
-        _normalMap = GetNormalMap(sliceContract, _backdropLayoutContract.Rows, _backdropLayoutContract.Columns);
+        _backdropNormalMap = _modelService.GenerateNormalMap(sliceContract, _backdropImage);
 
         for (var i = 0; i < _backdropLayoutContract.Rows; i++)
         {
@@ -139,7 +139,6 @@ public class LevelController : MonoBehaviour
         Texture2D t2d = new Texture2D(100,100);
         return t2d;*/
     }
-
 
     private void DrawLine(ref Texture2D t2d, IntVector2 start, IntVector2 end)
     {
@@ -369,7 +368,7 @@ public class LevelController : MonoBehaviour
         mapping.AddComponent<MeshRenderer>();
         mapping.transform.renderer.material = Resources.Load("Material/BumpedDiffuse") as Material;
         mapping.transform.renderer.material.SetTexture("_MainTex", _backdropImage);
-        mapping.transform.renderer.material.SetTexture("_BumpMap", _normalMap);
+        mapping.transform.renderer.material.SetTexture("_BumpMap", _backdropNormalMap);
 
         mapping.transform.parent = go.transform;
         mapping.transform.localPosition = new Vector3(0, 0, 0);
