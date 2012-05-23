@@ -2,6 +2,11 @@
 {
     public enum LevelName
     {
-        ModeSelection = 1
+        Welcome = 0,
+        Animation = 1,
+        Crossing = 2,
+        Loading = 3,
+        Battle = 4,
+        Awards = 5
     }
 }

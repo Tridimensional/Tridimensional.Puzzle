@@ -365,8 +365,7 @@ public class LevelController : MonoBehaviour
 
         var mapping = new GameObject("Mapping");
         mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
-        mapping.AddComponent<MeshRenderer>();
-        mapping.transform.renderer.material = Resources.Load("Material/BumpedDiffuse") as Material;
+        mapping.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
         mapping.transform.renderer.material.SetTexture("_MainTex", _backdropImage);
         mapping.transform.renderer.material.SetTexture("_BumpMap", _backdropNormalMap);
 

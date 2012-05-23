@@ -31,7 +31,7 @@ public class WelcomeController : MonoBehaviour
 
         if (Time.time > _duration)
         {
-            Application.LoadLevel(LevelName.ModeSelection.ToString());
+            Application.LoadLevel(LevelName.Animation.ToString());
         }
     }
 
