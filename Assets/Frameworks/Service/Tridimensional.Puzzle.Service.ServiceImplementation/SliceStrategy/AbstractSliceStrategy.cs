@@ -3,7 +3,6 @@ using Tridimensional.Puzzle.Foundation.Entity;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;
 using UnityEngine;
-using System.Text;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {

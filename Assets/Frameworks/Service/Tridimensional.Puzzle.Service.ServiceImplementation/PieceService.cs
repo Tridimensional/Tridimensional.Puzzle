@@ -23,7 +23,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var sliceRange = new Point(sliceEnd.X - sliceStart.X, sliceEnd.Y - sliceStart.Y);
 
             var conversionRate = GlobalConfiguration.PictureScaleInMeter / sliceRange.Y;
-            var mappingOffset = new Vector2();
+            var mappingOffset = image.width * sliceRange.Y > image.height * sliceRange.X ? new Vector2((image.width - sliceRange.X) * conversionRate / 2, 0) : new Vector2(0, (image.height - sliceRange.Y) * conversionRate / 2);
 
             var start = new Vector2(sliceStart.X, sliceStart.Y) * conversionRate;
             var range = new Vector2(sliceRange.X, sliceRange.Y) * conversionRate;
@@ -102,7 +102,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         private Vector3[] GetNormals(int length)
         {
             var normals = new Vector3[length];
-            for (var i = 0; i < length; i++) { normals[i] = new Vector3(0, 0, 0.5f); }
+            for (var i = 0; i < length; i++) { normals[i] = new Vector3(0, 0, 1f); }
             return normals;
         }
 

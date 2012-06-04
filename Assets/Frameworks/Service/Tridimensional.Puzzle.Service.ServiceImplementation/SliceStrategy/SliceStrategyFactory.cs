@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tridimensional.Puzzle.Foundation.Enumeration;
+﻿using Tridimensional.Puzzle.Foundation.Enumeration;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
