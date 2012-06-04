@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Tridimensional.Puzzle.Foundation;
+using Tridimensional.Puzzle.Foundation.Entity;
 using Tridimensional.Puzzle.Foundation.Enumeration;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;
@@ -11,22 +12,28 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
 	public class PieceService : IPieceService
     {
-        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Vector2 mappingOffset)
+        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image)
         {
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
             var result = new PieceContract[rows, columns];
 
-            var start = sliceContract.Vertexes[0, 0];
-            var end = sliceContract.Vertexes[rows, columns];
-            var range = new Vector2(end.x - start.x, end.y - start.y);
+            var sliceStart = sliceContract.Vertexes[0, 0];
+            var sliceEnd = sliceContract.Vertexes[rows, columns];
+            var sliceRange = new Point(sliceEnd.X - sliceStart.X, sliceEnd.Y - sliceStart.Y);
+
+            var conversionRate = GlobalConfiguration.PictureScaleInMeter / sliceRange.Y;
+            var mappingOffset = new Vector2();
+
+            var start = new Vector2(sliceStart.X, sliceStart.Y) * conversionRate;
+            var range = new Vector2(sliceRange.X, sliceRange.Y) * conversionRate;
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    var vertexes = GetVertexes(sliceContract, i, j);
-                    var center = new Vector2(range.x * (2 * j + 1f) / (2 * columns), range.y * (2 * i + 1f) / (2 * rows));
+                    var vertexes = GetVertexes(sliceContract, i, j, conversionRate);
+                    var center = new Vector2(range.x * (2 * j + 1) / (2 * columns), range.y * (2 * i + 1) / (2 * rows));
 
                     var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThicknessInMeter / 2));
                     var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThicknessInMeter));
@@ -56,10 +63,10 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return result;
         }
 
-        private Vector2[] GetVertexes(SliceContract sliceContract, int x, int y)
+        private Vector2[] GetVertexes(SliceContract sliceContract, int x, int y, float conversionRate)
         {
-            var points = null as Vector2[];
-            var vertexes = new List<Vector2>();
+            var points = null as Point[];
+            var vertexes = new List<Point>();
 
             vertexes.Add(sliceContract.Vertexes[x, y]);
             points = sliceContract.Lines[x, y, x + 1, y];
@@ -77,7 +84,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             points = VectorUtility.Reverse(sliceContract.Lines[x, y, x, y + 1]);
             if (points != null) { foreach (var p in points) { vertexes.Add(p); } }
 
-            return vertexes.ToArray();
+            return vertexes.ConvertAll(refer => new Vector2(refer.X, refer.Y) * conversionRate).ToArray();
         }
 
         private Vector2[] GetUVs(Vector2[] vertexes, Vector2 offset, Vector2 start, Vector2 range)

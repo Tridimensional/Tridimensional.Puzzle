@@ -3,16 +3,17 @@ using Tridimensional.Puzzle.Foundation.Entity;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;
 using UnityEngine;
+using System.Text;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
     public abstract class AbstractSliceStrategy
     {
         public abstract SliceContract GetSlice(LayoutContract layoutContract);
-        public abstract Vector2[,] GetVertexes(LayoutContract layoutContract);
-        public abstract Vector2[] GetConnectPoints(bool needFlip);
+        public abstract Point[,] GetVertexes(LayoutContract layoutContract);
+        public abstract Point[] GetConnectPoints(bool needFlip);
 
-        public LineDictionary GetLines(Vector2[,] vertexes)
+        public LineDictionary GetLines(Point[,] vertexes)
         {
             var lineDictionary = new LineDictionary();
             var rows = vertexes.GetLength(0);
@@ -40,7 +41,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return lineDictionary;
         }
 
-        private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2, Vector2[,] vertexes)
+        private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2, Point[,] vertexes)
         {
             if ((x1 == 0 && x2 == 0) || (y1 == 0 && y2 == 0)) { lineDictionary[x1, y1, x2, y2] = null; return; }
             var rows = vertexes.GetLength(0);
@@ -50,12 +51,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             lineDictionary[x1, y1, x2, y2] = GetConnectPoints(vertexes[x1, y1], vertexes[x2, y2], (x1 + y1) % 2 == 0);
         }
 
-        private Vector2[] GetConnectPoints(Vector2 head, Vector2 tail, bool needFlip)
+        private Point[] GetConnectPoints(Point head, Point tail, bool needFlip)
         {
             var points = GetConnectPoints(needFlip);
             var angle = VectorUtility.GetAngle(points[points.Length - 1] - points[0], tail - head);
-            var zoom = Vector2.Distance(tail, head) / Vector2.Distance(points[points.Length - 1], points[0]);
-            var result = new Vector2[points.Length - 2];
+            var zoom = Point.Distance(tail, head) / Point.Distance(points[points.Length - 1], points[0]);
+            var result = new Point[points.Length - 2];
 
             for (var i = 1; i < points.Length - 1; i++)
             {
@@ -65,18 +66,18 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return result;
         }
 
-        private Vector2 Transform(Vector2 start, Vector2 end, float degrees, float zoom, Vector2 translation)
+        private Point Transform(Point start, Point end, float degrees, float zoom, Point translation)
         {
             return Transform(end - start, degrees, zoom, start + translation);
         }
 
-        private Vector2 Transform(Vector2 point, float degrees, float zoom, Vector2 translation)
+        private Point Transform(Point point, float degrees, float zoom, Point translation)
         {
-            var angle = Math.PI * degrees / 180;
-            var sin = (float)Math.Sin(angle);
-            var cos = (float)Math.Cos(angle);
-            
-            return new Vector2(point.x * cos - point.y * sin, point.x * sin + point.y * cos) * zoom + translation;
+            var angle = Mathf.PI * degrees / 180;
+            var sin = Mathf.Sin(angle);
+            var cos = Mathf.Cos(angle);
+
+            return new Point(Convert.ToInt32(point.X * cos - point.Y * sin), Convert.ToInt32(point.X * sin + point.Y * cos)) * zoom + translation;
         }
     }
 }

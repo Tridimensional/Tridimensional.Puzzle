@@ -8,8 +8,8 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
 	public interface IModelService
 	{
-        LayoutContract GetProperLayout(float width, float height, int count);
-        LayoutContract GetProperLayout(float width, float height, GameDifficulty gameDifficulty);
+        LayoutContract GetProperLayout(int width, int height, int count);
+        LayoutContract GetProperLayout(int width, int height, GameDifficulty gameDifficulty);
         LayoutContract GetProperLayout(Texture2D image, int count);
         LayoutContract GetProperLayout(Texture2D image, GameDifficulty gameDifficulty);
         SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram);
