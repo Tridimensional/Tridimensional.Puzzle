@@ -7,7 +7,7 @@ using Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy;
 using Tridimensional.Puzzle.UI.ViewModel;
 using UnityEngine;
 
-public class LevelController : MonoBehaviour
+public class AnimationController : MonoBehaviour
 {
     IModelService _modelService;
     Texture2D _backdropImage;
@@ -17,12 +17,36 @@ public class LevelController : MonoBehaviour
     float _pieceWidth;
     float _flightHeight;
     float _circleDistance;
-    float _rotationCoefficient;
-    float _speed;
     int _rows;
     int _columns;
+    bool _finished;
 
     void Awake()
+    {
+        InitializationLight();
+        InitializationCamera();
+        InitializationEnvironment();
+    }
+
+    void InitializationLight()
+    {
+        var go = new GameObject("Light");
+        var light = go.AddComponent<Light>();
+        
+        light.intensity = 0.5f;
+        light.type = LightType.Directional;
+        light.transform.position = new Vector3(0, 0, -1);
+        light.transform.rotation = Quaternion.Euler(30, 30, 0);
+    }
+
+    void InitializationCamera()
+    {
+        camera.backgroundColor = GlobalConfiguration.BackgroundColor;
+        camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
+        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureScaleInMeter / 2 / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
+    }
+
+    void InitializationEnvironment()
     {
         _modelService = new ModelService(new PieceService(), new SliceStrategyFactory());
         _backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
@@ -34,11 +58,9 @@ public class LevelController : MonoBehaviour
         _rows = backdropLayoutContract.Rows;
         _columns = backdropLayoutContract.Columns;
         _visionWidth = GlobalConfiguration.PictureScaleInMeter * Screen.width / Screen.height;
-        _pieceWidth = GlobalConfiguration.PictureScaleInMeter / _rows;
+        _pieceWidth = _visionWidth / _columns;
         _flightHeight = _pieceWidth;
         _circleDistance = Mathf.PI * _flightHeight / 2;
-        _rotationCoefficient = 45 / _pieceWidth;
-        _speed = GlobalConfiguration.PictureScaleInMeter;
         _backdropPieceViewModels = new BackdropPieceViewModel[backdropLayoutContract.Rows, backdropLayoutContract.Columns];
         _backdropNormalMap = _modelService.GenerateNormalMap(sliceContract, _backdropImage);
 
@@ -61,59 +83,74 @@ public class LevelController : MonoBehaviour
 
     void Update()
     {
+        _finished = true;
+
         for (var i = 0; i < _rows; i++)
         {
             for (var j = 0; j < _columns; j++)
             {
                 var viewModel = _backdropPieceViewModels[i, j];
                 if (viewModel.Distance <= 0) { continue; }
+                else { _finished = false; }
 
-                var fallingSpeed = _speed * 0.2f;
+                Update(viewModel, GenerateBackdropPieceName(i, j));
+            }
+        }
 
-                if (viewModel.Distance > _circleDistance)
-                {
-                    var step = _speed * Time.deltaTime;
-                    var distance = viewModel.Distance - _circleDistance;
-                    viewModel.Distance = distance >= step ? (viewModel.Distance - step) : (_circleDistance - (Time.deltaTime - (distance / _speed)) * fallingSpeed);
-                }
-                else
-                {
-                    viewModel.Distance -= fallingSpeed * Time.deltaTime;
-                }
+        if (_finished)
+        {
+            Application.LoadLevel(LevelName.Crossing.ToString());
+        }
+    }
 
-                if (viewModel.Distance < 0) { viewModel.Distance = 0; }
+    private void Update(BackdropPieceViewModel viewModel, string objectName)
+    {
+        var straightlineSpeed = GlobalConfiguration.PictureScaleInMeter;
+        var corneringSpeeds = straightlineSpeed * 0.2f;
+        var rotationSpeed = 45 / _pieceWidth;
 
-                var go = GameObject.Find(GenerateBackdropPieceName(i, j));
+        if (viewModel.Distance > _circleDistance)
+        {
+            var step = straightlineSpeed * Time.deltaTime;
+            var distance = viewModel.Distance - _circleDistance;
+            viewModel.Distance = distance >= step ? (viewModel.Distance - step) : (_circleDistance - (Time.deltaTime - (distance / straightlineSpeed)) * corneringSpeeds);
+        }
+        else
+        {
+            viewModel.Distance -= corneringSpeeds * Time.deltaTime;
+        }
 
-                if (go == null && 2 * (viewModel.Distance + viewModel.Position.x - _pieceWidth) < _visionWidth)
-                {
-                    go = GenerateBackdropPiece(GenerateBackdropPieceName(i, j), new Vector3(_visionWidth, 0, 0), viewModel.BackseatMesh, viewModel.MappingMesh);
-                }
+        if (viewModel.Distance < 0) { viewModel.Distance = 0; }
 
-                if (go != null)
-                {
-                    var criticalAngle = 180;
+        var go = GameObject.Find(objectName);
 
-                    if (viewModel.Distance >= _circleDistance)
-                    {
-                        go.transform.position = viewModel.Position + new Vector3(viewModel.Distance - _circleDistance, 0, -_flightHeight);
-                    }
-                    else
-                    {
-                        var radius = _flightHeight / 2;
-                        var angle = viewModel.Distance / _circleDistance * Mathf.PI;
-                        go.transform.position = viewModel.Position + new Vector3(-radius * Mathf.Sin(angle), 0, -radius * (1 - Mathf.Cos(angle)));
-                    }
+        if (go == null && 2 * (viewModel.Distance + viewModel.Position.x - _pieceWidth) < _visionWidth)
+        {
+            go = GenerateBackdropPiece(objectName, new Vector3(_visionWidth, 0, 0), viewModel.BackseatMesh, viewModel.MappingMesh);
+        }
 
-                    if (viewModel.Distance >= _circleDistance)
-                    {
-                        go.transform.rotation = Quaternion.Euler(0, criticalAngle - (viewModel.Distance - _circleDistance) * _rotationCoefficient, 0);
-                    }
-                    else
-                    {
-                        go.transform.rotation = Quaternion.Euler(0, criticalAngle + (360 - criticalAngle) * (_circleDistance - viewModel.Distance) / _circleDistance, 0);
-                    }
-                }
+        if (go != null)
+        {
+            var criticalAngle = 180;
+
+            if (viewModel.Distance >= _circleDistance)
+            {
+                go.transform.position = viewModel.Position + new Vector3(viewModel.Distance - _circleDistance, 0, -_flightHeight);
+            }
+            else
+            {
+                var radius = _flightHeight / 2;
+                var angle = viewModel.Distance / _circleDistance * Mathf.PI;
+                go.transform.position = viewModel.Position + new Vector3(-radius * Mathf.Sin(angle), 0, -radius * (1 - Mathf.Cos(angle)));
+            }
+
+            if (viewModel.Distance >= _circleDistance)
+            {
+                go.transform.rotation = Quaternion.Euler(0, criticalAngle - (viewModel.Distance - _circleDistance) * rotationSpeed, 0);
+            }
+            else
+            {
+                go.transform.rotation = Quaternion.Euler(0, criticalAngle + (360 - criticalAngle) * (_circleDistance - viewModel.Distance) / _circleDistance, 0);
             }
         }
     }

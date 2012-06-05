@@ -20,13 +20,13 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             var sliceStart = sliceContract.Vertexes[0, 0];
             var sliceEnd = sliceContract.Vertexes[rows, columns];
-            var sliceRange = new Point(sliceEnd.X - sliceStart.X, sliceEnd.Y - sliceStart.Y);
+            var sliceRange = sliceEnd - sliceStart;
+            var sliceOffset = sliceRange.X * image.height > sliceRange.Y * image.width ? new Point(0, (sliceRange.X * image.height / image.width - sliceRange.Y) / 2) : new Point((sliceRange.Y * image.width / image.height - sliceRange.X) / 2, 0);
 
             var conversionRate = GlobalConfiguration.PictureScaleInMeter / sliceRange.Y;
-            var mappingOffset = image.width * sliceRange.Y > image.height * sliceRange.X ? new Vector2((image.width - sliceRange.X) * conversionRate / 2, 0) : new Vector2(0, (image.height - sliceRange.Y) * conversionRate / 2);
-
             var start = new Vector2(sliceStart.X, sliceStart.Y) * conversionRate;
             var range = new Vector2(sliceRange.X, sliceRange.Y) * conversionRate;
+            var offset = new Vector2(sliceOffset.X, sliceOffset.Y) * conversionRate;
 
             for (var i = 0; i < rows; i++)
             {
@@ -49,11 +49,13 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
                     pieceContract.MappingMesh.vertices = topVertexes;
                     pieceContract.MappingMesh.triangles = GetTriangles(upperTriangles);
-                    pieceContract.MappingMesh.uv = GetUVs(vertexes, mappingOffset, start, range);
+                    pieceContract.MappingMesh.uv = GetUVs(vertexes, offset, start, range);
+                    pieceContract.MappingMesh.tangents = new Vector4[pieceContract.MappingMesh.vertices.Length];
                     pieceContract.MappingMesh.RecalculateNormals();
 
                     pieceContract.BackseatMesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
                     pieceContract.BackseatMesh.triangles = GetTriangles(sideTriangles, bottomTriangles);
+                    pieceContract.BackseatMesh.uv = new Vector2[pieceContract.BackseatMesh.vertices.Length];
                     pieceContract.BackseatMesh.normals = GetNormals(pieceContract.BackseatMesh.vertices.Length);
 
                     result[i, j] = pieceContract;
