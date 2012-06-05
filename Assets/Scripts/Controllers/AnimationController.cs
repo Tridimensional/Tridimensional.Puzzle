@@ -1,9 +1,7 @@
 ﻿using Tridimensional.Puzzle.Foundation;
 using Tridimensional.Puzzle.Foundation.Enumeration;
-using Tridimensional.Puzzle.Service.Contract;
+using Tridimensional.Puzzle.IOC;
 using Tridimensional.Puzzle.Service.IServiceProvider;
-using Tridimensional.Puzzle.Service.ServiceImplementation;
-using Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy;
 using Tridimensional.Puzzle.UI.ViewModel;
 using UnityEngine;
 
@@ -32,7 +30,7 @@ public class AnimationController : MonoBehaviour
     {
         var go = new GameObject("Light");
         var light = go.AddComponent<Light>();
-        
+
         light.intensity = 0.5f;
         light.type = LightType.Directional;
         light.transform.position = new Vector3(0, 0, -1);
@@ -43,26 +41,26 @@ public class AnimationController : MonoBehaviour
     {
         camera.backgroundColor = GlobalConfiguration.BackgroundColor;
         camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
-        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureScaleInMeter / 2 / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
+        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter / 2 / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
     }
 
     void InitializationEnvironment()
     {
-        _modelService = new ModelService(new PieceService(), new SliceStrategyFactory());
+        _modelService = InjectionRepository.Instance.Get<IModelService>();
         _backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
 
-        var backdropLayoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
-        var sliceContract = _modelService.GetSlice(backdropLayoutContract, SliceProgram.Default);
-        var pieceContracts = _modelService.GeneratePiece(sliceContract, _backdropImage);
+        var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
+        var sliceContract = _modelService.GetSlice(_backdropImage, layoutContract, SliceProgram.Default);
+        var pieceContracts = _modelService.GeneratePiece(sliceContract);
 
-        _rows = backdropLayoutContract.Rows;
-        _columns = backdropLayoutContract.Columns;
-        _visionWidth = GlobalConfiguration.PictureScaleInMeter * Screen.width / Screen.height;
+        _rows = layoutContract.Rows;
+        _columns = layoutContract.Columns;
+        _visionWidth = GlobalConfiguration.PictureHeightInMeter * Screen.width / Screen.height;
         _pieceWidth = _visionWidth / _columns;
         _flightHeight = _pieceWidth;
         _circleDistance = Mathf.PI * _flightHeight / 2;
-        _backdropPieceViewModels = new BackdropPieceViewModel[backdropLayoutContract.Rows, backdropLayoutContract.Columns];
-        _backdropNormalMap = _modelService.GenerateNormalMap(sliceContract, _backdropImage);
+        _backdropPieceViewModels = new BackdropPieceViewModel[layoutContract.Rows, layoutContract.Columns];
+        _backdropNormalMap = _modelService.GenerateNormalMap(sliceContract);
 
         for (var i = 0; i < _rows; i++)
         {
@@ -99,13 +97,13 @@ public class AnimationController : MonoBehaviour
 
         if (_finished)
         {
-            Application.LoadLevel(LevelName.Crossing.ToString());
+            //Application.LoadLevel(LevelName.Crossing.ToString());
         }
     }
 
     private void Update(BackdropPieceViewModel viewModel, string objectName)
     {
-        var straightlineSpeed = GlobalConfiguration.PictureScaleInMeter;
+        var straightlineSpeed = GlobalConfiguration.PictureHeightInMeter;
         var corneringSpeeds = straightlineSpeed * 0.2f;
         var rotationSpeed = 45 / _pieceWidth;
 

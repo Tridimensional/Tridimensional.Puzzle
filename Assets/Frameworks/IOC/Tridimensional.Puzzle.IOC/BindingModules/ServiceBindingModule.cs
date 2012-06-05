@@ -9,6 +9,7 @@ namespace Tridimensional.Puzzle.IOC.BindingModules
         public override void Load()
         {
             Bind<IPieceService>().To<PieceService>().InSingletonScope();
+            Bind<IGraphicsService>().To<GraphicsService>().InSingletonScope();
             Bind<IModelService>().To<ModelService>().InSingletonScope();
         }
 	}

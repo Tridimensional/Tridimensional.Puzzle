@@ -10,30 +10,31 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
-	public class PieceService : IPieceService
+    public class PieceService : IPieceService
     {
-        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image)
+        public PieceContract[,] GeneratePiece(SliceContract sliceContract)
         {
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
-            var result = new PieceContract[rows, columns];
 
             var sliceStart = sliceContract.Vertexes[0, 0];
             var sliceEnd = sliceContract.Vertexes[rows, columns];
-            var sliceRange = sliceEnd - sliceStart;
-            var sliceOffset = sliceRange.X * image.height > sliceRange.Y * image.width ? new Point(0, (sliceRange.X * image.height / image.width - sliceRange.Y) / 2) : new Point((sliceRange.Y * image.width / image.height - sliceRange.X) / 2, 0);
+            var sliceValidRange = sliceEnd - sliceStart;
 
-            var conversionRate = GlobalConfiguration.PictureScaleInMeter / sliceRange.Y;
-            var start = new Vector2(sliceStart.X, sliceStart.Y) * conversionRate;
-            var range = new Vector2(sliceRange.X, sliceRange.Y) * conversionRate;
-            var offset = new Vector2(sliceOffset.X, sliceOffset.Y) * conversionRate;
+            var conversionRate = GlobalConfiguration.PictureHeightInMeter / sliceValidRange.Y;
+
+            var range = new Vector2(sliceContract.Width, sliceContract.Height) * conversionRate;
+            var pieceRange = new Vector2(1f * sliceValidRange.X / columns, 1f * sliceValidRange.Y / rows) * conversionRate;
+            var offset = new Vector2(sliceStart.X, sliceStart.Y) * conversionRate;
+
+            var result = new PieceContract[rows, columns];
 
             for (var i = 0; i < rows; i++)
             {
                 for (var j = 0; j < columns; j++)
                 {
                     var vertexes = GetVertexes(sliceContract, i, j, conversionRate);
-                    var center = new Vector2(range.x * (2 * j + 1) / (2 * columns), range.y * (2 * i + 1) / (2 * rows));
+                    var center = new Vector2(offset.x + (j + 0.5f) * pieceRange.x, offset.y + (i + 0.5f) * pieceRange.y);
 
                     var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThicknessInMeter / 2));
                     var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThicknessInMeter));
@@ -49,14 +50,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
                     pieceContract.MappingMesh.vertices = topVertexes;
                     pieceContract.MappingMesh.triangles = GetTriangles(upperTriangles);
-                    pieceContract.MappingMesh.uv = GetUVs(vertexes, offset, start, range);
+                    pieceContract.MappingMesh.uv = GetUVs(vertexes, range);
                     pieceContract.MappingMesh.tangents = new Vector4[pieceContract.MappingMesh.vertices.Length];
-                    pieceContract.MappingMesh.RecalculateNormals();
+                    pieceContract.MappingMesh.normals = GetNormals(pieceContract.MappingMesh.vertices.Length, new Vector3(0, 0, -1f));
 
                     pieceContract.BackseatMesh.vertices = GetVertexes(topVertexeContracts, bottomVertexeContracts);
                     pieceContract.BackseatMesh.triangles = GetTriangles(sideTriangles, bottomTriangles);
                     pieceContract.BackseatMesh.uv = new Vector2[pieceContract.BackseatMesh.vertices.Length];
-                    pieceContract.BackseatMesh.normals = GetNormals(pieceContract.BackseatMesh.vertices.Length);
+                    pieceContract.BackseatMesh.normals = GetNormals(pieceContract.BackseatMesh.vertices.Length, new Vector3(0, 0, 1f));
 
                     result[i, j] = pieceContract;
                 }
@@ -89,22 +90,22 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return vertexes.ConvertAll(refer => new Vector2(refer.X, refer.Y) * conversionRate).ToArray();
         }
 
-        private Vector2[] GetUVs(Vector2[] vertexes, Vector2 offset, Vector2 start, Vector2 range)
+        private Vector2[] GetUVs(Vector2[] vertexes, Vector2 range)
         {
             var vectors = new Vector2[vertexes.Length];
 
             for (var i = 0; i < vertexes.Length; i++)
             {
-                vectors[i] = new Vector2((vertexes[i].x + offset.x - start.x) / (range.x + offset.x * 2), (vertexes[i].y + offset.y - start.y) / (range.y + offset.y * 2));
+                vectors[i] = new Vector2((vertexes[i].x ) / range.x, (vertexes[i].y) / range.y);
             }
 
             return vectors;
         }
 
-        private Vector3[] GetNormals(int length)
+        private Vector3[] GetNormals(int length, Vector3 normal)
         {
             var normals = new Vector3[length];
-            for (var i = 0; i < length; i++) { normals[i] = new Vector3(0, 0, 1f); }
+            for (var i = 0; i < length; i++) { normals[i] = normal; }
             return normals;
         }
 

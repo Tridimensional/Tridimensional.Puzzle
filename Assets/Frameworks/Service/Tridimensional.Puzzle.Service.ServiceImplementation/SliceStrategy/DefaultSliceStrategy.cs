@@ -6,14 +6,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
     public class DefaultSliceStrategy : AbstractSliceStrategy
     {
-        public override SliceContract GetSlice(LayoutContract layoutContract)
-        {
-            var vertexes = GetVertexes(layoutContract);
-            var lines = GetLines(vertexes);
-            return new SliceContract { Vertexes = vertexes, Lines = lines };
-        }
-
-        public override Point[,] GetVertexes(LayoutContract layoutContract)
+        protected override Point[,] GetVertexes(LayoutContract layoutContract, Point offset)
         {
             var rows = layoutContract.Rows + 1;
             var columns = layoutContract.Columns + 1;
@@ -23,20 +16,20 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    vertexes[i, j] = new Point(layoutContract.Width * j / layoutContract.Columns, layoutContract.Height * i / layoutContract.Rows);
+                    vertexes[i, j] = offset + new Point(layoutContract.Width * j / layoutContract.Columns, layoutContract.Height * i / layoutContract.Rows);
                 }
             }
 
             return vertexes;
         }
 
-        public override Point[] GetConnectPoints(bool needFlip)
+        protected override Point[] GetConnectPoints(bool needFlip)
         {
             var points = new[]
             {
                 new Point(0,0),
                 new Point(250,0),
-                new Point(500,200),
+                new Point(500,0),
                 new Point(750,0),
                 new Point(1000,0)
             };

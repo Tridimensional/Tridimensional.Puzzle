@@ -8,11 +8,20 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
     public abstract class AbstractSliceStrategy
     {
-        public abstract SliceContract GetSlice(LayoutContract layoutContract);
-        public abstract Point[,] GetVertexes(LayoutContract layoutContract);
-        public abstract Point[] GetConnectPoints(bool needFlip);
+        protected abstract Point[,] GetVertexes(LayoutContract layoutContract, Point offset);
+        protected abstract Point[] GetConnectPoints(bool needFlip);
 
-        public LineDictionary GetLines(Point[,] vertexes)
+        public SliceContract GetSlice(Texture2D image, LayoutContract layoutContract)
+        {
+            var scale = GetSliceScale(image, layoutContract);
+            var offset = (scale - new Point(layoutContract.Width, layoutContract.Height)) / 2;
+            var vertexes = GetVertexes(layoutContract, offset);
+            var lines = GetLines(vertexes);
+
+            return new SliceContract { Vertexes = vertexes, Lines = lines, Width = scale.X, Height = scale.Y };
+        }
+
+        protected LineDictionary GetLines(Point[,] vertexes)
         {
             var lineDictionary = new LineDictionary();
             var rows = vertexes.GetLength(0);
@@ -22,31 +31,38 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             {
                 for (var j = 0; j < columns - 1; j++)
                 {
-                    SetLineDictionary(lineDictionary, i, j, i + 1, j, vertexes);
-                    SetLineDictionary(lineDictionary, i, j, i, j + 1, vertexes);
+                    if (i == 0) { SetLineDictionary(lineDictionary, i, j, i, j + 1); }
+                    else { SetLineDictionary(lineDictionary, i, j, i, j + 1, vertexes); }
+                    if (j == 0) { SetLineDictionary(lineDictionary, i, j, i + 1, j); }
+                    else { SetLineDictionary(lineDictionary, i, j, i + 1, j, vertexes); }
                 }
             }
 
-            for (var i = 0; i < rows - 1; i++)
-            {
-                SetLineDictionary(lineDictionary, i, columns - 1, i + 1, columns - 1, vertexes);
-            }
-
-            for (var j = 0; j < columns - 1; j++)
-            {
-                SetLineDictionary(lineDictionary, rows - 1, j, rows - 1, j + 1, vertexes);
-            }
+            for (var i = 0; i < rows - 1; i++) { SetLineDictionary(lineDictionary, i, columns - 1, i + 1, columns - 1); }
+            for (var j = 0; j < columns - 1; j++) { SetLineDictionary(lineDictionary, rows - 1, j, rows - 1, j + 1); }
 
             return lineDictionary;
         }
 
+        private Point GetSliceScale(Texture2D image, LayoutContract layoutContract)
+        {
+            if (image.width * layoutContract.Height > image.height * layoutContract.Width)
+            {
+                return new Point(image.width * layoutContract.Height / image.height, layoutContract.Height);
+            }
+            else
+            {
+                return new Point(layoutContract.Width, image.height * layoutContract.Width / image.width);
+            }
+        }
+
+        private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2)
+        {
+            lineDictionary[x1, y1, x2, y2] = null;
+        }
+
         private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2, Point[,] vertexes)
         {
-            if ((x1 == 0 && x2 == 0) || (y1 == 0 && y2 == 0)) { lineDictionary[x1, y1, x2, y2] = null; return; }
-            var rows = vertexes.GetLength(0);
-            var columns = vertexes.GetLength(1);
-            if ((x1 == x2 && x1 == rows - 1) || (y1 == y2 && y1 == columns - 1)) { lineDictionary[x1, y1, x2, y2] = null; return; }
-
             lineDictionary[x1, y1, x2, y2] = GetConnectPoints(vertexes[x1, y1], vertexes[x2, y2], (x1 + y1) % 2 == 0);
         }
 

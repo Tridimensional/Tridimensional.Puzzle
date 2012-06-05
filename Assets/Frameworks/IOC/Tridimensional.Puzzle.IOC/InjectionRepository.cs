@@ -3,7 +3,7 @@ using Tridimensional.Puzzle.IOC.BindingModules;
 
 namespace Tridimensional.Puzzle.IOC
 {
-	public class InjectionRepository
+    public class InjectionRepository
     {
         #region Instance
 
@@ -33,14 +33,19 @@ namespace Tridimensional.Puzzle.IOC
 
         readonly IKernel _kernel;
 
+        public IKernel Kernel
+        {
+            get { return this._kernel; }
+        }
+
         public InjectionRepository()
         {
             _kernel = new StandardKernel(new ServiceBindingModule());
         }
 
-        public IKernel Kernel
+        public T Get<T>()
         {
-            get { return this._kernel; }
+            return _kernel.Get<T>();
         }
-	}
+    }
 }

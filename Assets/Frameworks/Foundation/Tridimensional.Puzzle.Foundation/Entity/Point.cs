@@ -34,6 +34,11 @@ namespace Tridimensional.Puzzle.Foundation.Entity
             return new Point(Convert.ToInt32(p.X * f), Convert.ToInt32(p.Y * f));
         }
 
+        public static Point operator /(Point p, float f)
+        {
+            return new Point(Convert.ToInt32(p.X / f), Convert.ToInt32(p.Y / f));
+        }
+
         public static float Distance(Point p1, Point p2)
         {
             var x = p1.X - p2.X;

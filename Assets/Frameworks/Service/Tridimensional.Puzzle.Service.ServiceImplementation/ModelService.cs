@@ -11,11 +11,13 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
     public class ModelService : IModelService
     {
         IPieceService _pieceService;
+        IGraphicsService _graphicsService;
         SliceStrategyFactory _sliceStrategyFactory;
 
-        public ModelService(IPieceService pieceService, SliceStrategyFactory sliceStrategyFactory)
+        public ModelService(IPieceService pieceService, IGraphicsService graphicsService, SliceStrategyFactory sliceStrategyFactory)
         {
             _pieceService = pieceService;
+            _graphicsService = graphicsService;
             _sliceStrategyFactory = sliceStrategyFactory;
         }
 
@@ -49,20 +51,20 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             };
         }
 
-        public SliceContract GetSlice(LayoutContract layoutContract, SliceProgram sliceProgram)
+        public SliceContract GetSlice(Texture2D image, LayoutContract layoutContract, SliceProgram sliceProgram)
         {
             var sliceStrategy = _sliceStrategyFactory.Create(sliceProgram);
-            return sliceStrategy.GetSlice(layoutContract);
+            return sliceStrategy.GetSlice(image, layoutContract);
         }
 
-        public PieceContract[,] GeneratePiece(SliceContract sliceContract, Texture2D image)
+        public PieceContract[,] GeneratePiece(SliceContract sliceContract)
         {
-            return _pieceService.GeneratePiece(sliceContract, image);
+            return _pieceService.GeneratePiece(sliceContract);
         }
 
-        public Texture2D GenerateNormalMap(SliceContract sliceContract, Texture2D image)
+        public Texture2D GenerateNormalMap(SliceContract sliceContract)
         {
-            return null;
+            return _graphicsService.GenerateNormalMap(sliceContract);
         }
     }
 }
