@@ -9,5 +9,6 @@ namespace Tridimensional.Puzzle.Foundation
         public static float PictureHeightInMeter { get { return 0.5f; } }
         public static float PieceThicknessInMeter { get { return 0.0035f; } }
         public static float CameraToSubjectInMeter { get { return 0.8f; } }
+        public static int SoftenWidthInPixel { get { return 3; } }
 	}
 }

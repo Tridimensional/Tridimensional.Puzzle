@@ -64,7 +64,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         public Texture2D GenerateNormalMap(SliceContract sliceContract)
         {
-            return _graphicsService.GenerateNormalMap(sliceContract);
+            var heightMap = _graphicsService.GenerateHeightMap(sliceContract);
+            return _graphicsService.GenerateNormalMap(heightMap);
         }
     }
 }

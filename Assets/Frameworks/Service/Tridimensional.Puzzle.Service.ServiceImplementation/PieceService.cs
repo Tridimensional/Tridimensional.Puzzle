@@ -42,9 +42,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     var topVertexeContracts = ConvertToVertexContracts(topVertexes, 0);
                     var bottomVertexeContracts = ConvertToVertexContracts(bottomVertexes, topVertexeContracts.Length);
 
-                    var upperTriangles = GetTriangles(topVertexeContracts.Copy());
-                    var sideTriangles = GetTriangles(topVertexeContracts.Copy(), bottomVertexeContracts.Copy(), Shape.Cylinder);
-                    var bottomTriangles = GetTriangles(bottomVertexeContracts.Copy(), true);
+                    var upperTriangles = GetTriangles(topVertexeContracts.Link());
+                    var sideTriangles = GetTriangles(topVertexeContracts.Link(), bottomVertexeContracts.Link(), Shape.Cylinder);
+                    var bottomTriangles = GetTriangles(bottomVertexeContracts.Link(), true);
 
                     var pieceContract = new PieceContract { MappingMesh = new Mesh(), BackseatMesh = new Mesh(), Position = center - range / 2 };
 

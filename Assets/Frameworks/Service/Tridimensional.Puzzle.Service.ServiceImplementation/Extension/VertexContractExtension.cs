@@ -15,18 +15,6 @@ namespace Tridimensional.Puzzle.Service.Contract
             return new Vector2 { x = vertex.x, y = vertex.y };
         }
 
-        public static VertexContract[] Copy(this VertexContract[] source)
-        {
-            var result = new VertexContract[source.Length];
-
-            for (var i = 0; i < source.Length; i++)
-            {
-                result[i] = new VertexContract { x = source[i].x, y = source[i].y, z = source[i].z, Index = source[i].Index };
-            }
-
-            return Link(result);
-        }
-
         public static VertexContract[] Link(this VertexContract[] source)
         {
             for (var i = 0; i < source.Length; i++)
