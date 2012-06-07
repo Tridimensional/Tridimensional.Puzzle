@@ -41,7 +41,7 @@ public class AnimationController : MonoBehaviour
     {
         camera.backgroundColor = GlobalConfiguration.BackgroundColor;
         camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
-        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter / 2 / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
+        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
     }
 
     void InitializationEnvironment()

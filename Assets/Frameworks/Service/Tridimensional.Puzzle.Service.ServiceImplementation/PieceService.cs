@@ -13,43 +13,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
     {
         public PieceContract[,] GeneratePiece(SliceContract sliceContract)
         {
-            //var testVectors = new[]
-            //{
-            //    new Vector3(0, 0,0),
-            //    new Vector3(250, 0,0),
-            //    new Vector3(500, 100,0),
-            //    new Vector3(750, 0,0),
-            //    new Vector3(1000, 0,0)
-            //};
-
-
-            //var surfaces2 = new List<VertexContract[]>();
-            //JoinSurface(surfaces2, ConvertToVertexContracts(testVectors), true);
-            //var triangles2 = GetTriangles(surfaces2);
-
-            //Debug.Log(">>>>>>>>>>>>>>>>>>>>> reverse <<<<<<<<<<<<<<<<<<<<<<");
-            //foreach (var t in triangles2)
-            //{
-            //    Debug.Log(t);
-            //}
-
-            //var surfaces1 = new List<VertexContract[]>();
-            //JoinSurface(surfaces1, ConvertToVertexContracts(testVectors), false);
-            //var triangles1 = GetTriangles(surfaces1);
-
-            //Debug.Log(">>>>>>>>>>>>>>>>>>>>> forward <<<<<<<<<<<<<<<<<<<<<<");
-            //foreach (var t in triangles1)
-            //{
-            //    Debug.Log(t);
-            //}
-            
-
-
-
-
-
-
-
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
 
@@ -126,7 +89,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             for (var i = 0; i < topVertexes.Length; i++)
             {
                 endIndex = i < topVertexes.Length - 1 ? i + 1 : 0;
-                JoinSurface(surfaces, ConvertToVertexContracts(topVertexes[i], bottomVertexes[i], bottomVertexes[endIndex], topVertexes[endIndex]));
+                JoinSurface(surfaces, ConvertToVertexContracts(topVertexes[i], topVertexes[endIndex], bottomVertexes[endIndex], bottomVertexes[i]));
             }
 
             JoinSurface(surfaces, ConvertToVertexContracts(bottomVertexes));
@@ -165,14 +128,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 list.Add(_list);
             }
 
-            var index =0;
+            var index = length - 1;
             var result = new int[length];
 
             for (var i = 0; i < list.Count; i++)
             {
                 for (var j = 0; j < list[i].Count; j++)
                 {
-                    result[index++] = list[i][j];
+                    result[index--] = list[i][j];
                 }
             }
 
