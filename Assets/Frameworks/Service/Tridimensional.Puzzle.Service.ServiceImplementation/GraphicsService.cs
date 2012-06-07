@@ -10,7 +10,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
     {
         public Texture2D GenerateNormalMap(Texture2D heightMap)
         {
-            var dx = 0f; var dy = 0f; var strength = 1.1f;
+            var dx = 0f; var dy = 0f; var strength = 0.5f;
             var left = 0f; var right = 0f; var up = 0f; var down = 0f;
 
             var result = new Texture2D(heightMap.width, heightMap.height, TextureFormat.ARGB32, true);

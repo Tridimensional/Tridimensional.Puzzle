@@ -15,21 +15,12 @@ namespace Tridimensional.Puzzle.Service.Contract
             return new Vector2 { x = vertex.x, y = vertex.y };
         }
 
-        public static VertexContract[] Link(this VertexContract[] source)
+        public static VertexContract[] Link(this VertexContract[] source, int startIndex)
         {
             for (var i = 0; i < source.Length; i++)
             {
                 source[i].Previous = i == 0 ? source[source.Length - 1] : source[i - 1];
                 source[i].Next = i == source.Length - 1 ? source[0] : source[i + 1];
-            }
-
-            return source;
-        }
-
-        public static VertexContract[] SetIndex(this VertexContract[] source, int startIndex)
-        {
-            for (var i = 0; i < source.Length; i++)
-            {
                 source[i].Index = startIndex++;
             }
 

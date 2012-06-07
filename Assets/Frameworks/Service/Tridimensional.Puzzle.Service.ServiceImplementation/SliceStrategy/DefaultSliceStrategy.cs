@@ -28,7 +28,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             var points = new[]
             {
                 new Point(0, 0),
-                new Point(500, 0),
+                new Point(250, 0),
+                new Point(500, 100),
+                new Point(750, 0),
                 new Point(1000, 0)
             };
 
