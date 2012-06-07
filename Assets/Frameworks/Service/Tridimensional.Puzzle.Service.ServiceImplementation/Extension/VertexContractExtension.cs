@@ -25,5 +25,23 @@ namespace Tridimensional.Puzzle.Service.Contract
 
             return source;
         }
+
+        public static VertexContract[] SetIndex(this VertexContract[] source, int startIndex)
+        {
+            for (var i = 0; i < source.Length; i++)
+            {
+                source[i].Index = startIndex++;
+            }
+
+            return source;
+        }
+
+        public static VertexContract[] Reverse(this VertexContract[] source)
+        {
+            if (source == null) { return null; }
+            var result = new VertexContract[source.Length];
+            for (var i = 0; i < source.Length; i++) { result[i] = source[source.Length - i - 1]; }
+            return result;
+        }
     }
 }

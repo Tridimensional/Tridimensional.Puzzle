@@ -13,10 +13,9 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
         LayoutContract GetProperLayout(Texture2D image, int count);
         LayoutContract GetProperLayout(Texture2D image, GameDifficulty gameDifficulty);
         SliceContract GetSlice(Texture2D image, LayoutContract layoutContract, SliceProgram sliceProgram);
-        GameObject GeneratePiece(string name, Vector3 position, Mesh mesh, Color color, Texture2D mainTexture, Texture2D normalMap);
+        GameObject GeneratePiece(string name, Vector3 position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap);
         string GeneratePieceName(int row, int column);
         PieceContract[,] GeneratePieceContracts(SliceContract sliceContract);
         Texture2D GenerateNormalMap(SliceContract sliceContract);
     }
 }
-

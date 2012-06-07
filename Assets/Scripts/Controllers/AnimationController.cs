@@ -91,7 +91,7 @@ public class AnimationController : MonoBehaviour
                 if (viewModel.Distance <= 0) { continue; }
                 else { _finished = false; }
 
-                Update(viewModel, GenerateBackdropPieceName(i, j));
+                Update(viewModel, _modelService.GeneratePieceName(i, j));
             }
         }
 
@@ -124,7 +124,7 @@ public class AnimationController : MonoBehaviour
 
         if (go == null && 2 * (viewModel.Distance + viewModel.Position.x - _pieceWidth) < _visionWidth)
         {
-            go = GenerateBackdropPiece(objectName, new Vector3(_visionWidth, 0, 0), viewModel.BackseatMesh, viewModel.MappingMesh);
+            go = _modelService.GeneratePiece(objectName, viewModel.Position, viewModel.MappingMesh, viewModel.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), _backdropImage, _backdropNormalMap);
         }
 
         if (go != null)
@@ -151,29 +151,5 @@ public class AnimationController : MonoBehaviour
                 go.transform.rotation = Quaternion.Euler(0, criticalAngle + (360 - criticalAngle) * (_circleDistance - viewModel.Distance) / _circleDistance, 0);
             }
         }
-    }
-
-    GameObject GenerateBackdropPiece(string name, Vector3 position, Mesh backseatMesh, Mesh mappingMesh)
-    {
-        var go = new GameObject(name);
-        go.AddComponent<MeshFilter>().mesh = backseatMesh;
-        go.AddComponent<MeshRenderer>().material.color = new Color32(0xcc, 0xcc, 0xcc, 0xff);
-        go.transform.position = position;
-
-        var mapping = new GameObject("Mapping");
-        mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
-        mapping.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
-        mapping.transform.renderer.material.SetTexture("_MainTex", _backdropImage);
-        mapping.transform.renderer.material.SetTexture("_BumpMap", _backdropNormalMap);
-
-        mapping.transform.parent = go.transform;
-        mapping.transform.localPosition = new Vector3(0, 0, 0);
-
-        return go;
-    }
-
-    string GenerateBackdropPieceName(int row, int column)
-    {
-        return string.Format("Piece <{0:000},{1:000}>", row, column);
     }
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Foundation.Utility
 {
-	public class VectorUtility
-	{
+    public class VectorUtility
+    {
         public static float GetAngle(Point from, Point to)
         {
             return GetAngle(from.X, from.Y, to.X, to.Y);

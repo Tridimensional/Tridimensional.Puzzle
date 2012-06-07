@@ -56,16 +56,21 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return sliceStrategy.GetSlice(image, layoutContract);
         }
 
-        public GameObject GeneratePiece(string name, Vector3 position, Mesh mesh, Color color, Texture2D mainTexture, Texture2D normalMap)
+        public GameObject GeneratePiece(string name, Vector3 position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
         {
             var go = new GameObject(name);
-
-            go.AddComponent<MeshFilter>().mesh = mesh;
-            go.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
-            go.transform.renderer.material.color = color;
-            go.transform.renderer.material.SetTexture("_MainTex", mainTexture);
-            go.transform.renderer.material.SetTexture("_BumpMap", normalMap);
+            go.AddComponent<MeshFilter>().mesh = backseatMesh;
+            go.AddComponent<MeshRenderer>().material.color = color;
             go.transform.position = position;
+
+            var mapping = new GameObject("Mapping");
+            mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
+            mapping.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
+            mapping.transform.renderer.material.SetTexture("_MainTex", mainTexture);
+            mapping.transform.renderer.material.SetTexture("_BumpMap", normalMap);
+
+            mapping.transform.parent = go.transform;
+            mapping.transform.localPosition = new Vector3(0, 0, 0);
 
             return go;
         }

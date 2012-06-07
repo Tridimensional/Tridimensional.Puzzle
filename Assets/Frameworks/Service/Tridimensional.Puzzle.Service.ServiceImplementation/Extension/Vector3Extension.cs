@@ -5,9 +5,9 @@ namespace UnityEngine
 {
     public static class Vector3Extension
     {
-        public static VertexContract ToVertexContract(this Vector3 vector3, int index)
+        public static VertexContract ToVertexContract(this Vector3 vector3)
         {
-            return new VertexContract { x = vector3.x, y = vector3.y, z = vector3.z, Index = index };
+            return new VertexContract { x = vector3.x, y = vector3.y, z = vector3.z };
         }
     }
 }
