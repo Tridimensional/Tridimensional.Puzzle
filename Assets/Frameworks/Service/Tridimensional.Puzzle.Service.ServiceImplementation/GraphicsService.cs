@@ -23,8 +23,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     right = heightMap.GetPixel(j + 1, i).grayscale * strength;
                     up = heightMap.GetPixel(j, i - 1).grayscale * strength;
                     down = heightMap.GetPixel(j, i + 1).grayscale * strength;
-                    dx = (left - right + 1) * 0.5f;
-                    dy = (up - down + 1) * 0.5f;
+                    dx = (left - right) * 0.5f;
+                    dy = (down - up) * 0.5f;
 
                     result.SetPixel(j, i, new Color(dx, dy, 1.0f, dx));
                 }

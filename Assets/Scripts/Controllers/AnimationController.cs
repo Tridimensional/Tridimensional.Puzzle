@@ -51,7 +51,7 @@ public class AnimationController : MonoBehaviour
 
         var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
         var sliceContract = _modelService.GetSlice(_backdropImage, layoutContract, SliceProgram.Default);
-        var pieceContracts = _modelService.GeneratePiece(sliceContract);
+        var pieceContracts = _modelService.GeneratePieceContracts(sliceContract);
 
         _rows = layoutContract.Rows;
         _columns = layoutContract.Columns;

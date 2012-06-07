@@ -1,5 +1,4 @@
 using System;
-using Tridimensional.Puzzle.Foundation.Entity;
 using Tridimensional.Puzzle.Foundation.Enumeration;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
@@ -57,7 +56,26 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return sliceStrategy.GetSlice(image, layoutContract);
         }
 
-        public PieceContract[,] GeneratePiece(SliceContract sliceContract)
+        public GameObject GeneratePiece(string name, Vector3 position, Mesh mesh, Color color, Texture2D mainTexture, Texture2D normalMap)
+        {
+            var go = new GameObject(name);
+
+            go.AddComponent<MeshFilter>().mesh = mesh;
+            go.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
+            go.transform.renderer.material.color = color;
+            go.transform.renderer.material.SetTexture("_MainTex", mainTexture);
+            go.transform.renderer.material.SetTexture("_BumpMap", normalMap);
+            go.transform.position = position;
+
+            return go;
+        }
+
+        public string GeneratePieceName(int row, int column)
+        {
+            return string.Format("Piece <{0:000},{1:000}>", row, column);
+        }
+
+        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract)
         {
             return _pieceService.GeneratePiece(sliceContract);
         }
