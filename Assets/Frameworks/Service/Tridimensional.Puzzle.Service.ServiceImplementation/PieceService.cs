@@ -117,10 +117,10 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private int[] GetTriangles(List<SurfaceContract> surfaces)
         {
-            var length = 0;
+            var temp = null as List<int>;
             var list = new List<List<int>>();
-            var _list = null as List<int>;
             var vertexes = null as VertexContract[];
+            var length = 0;
 
             foreach (var surface in surfaces)
             {
@@ -129,18 +129,18 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 switch (surface.Direction)
                 {
                     case Direction.Side:
-                        _list = new List<int> { vertexes[0].Index, vertexes[1].Index, vertexes[2].Index, vertexes[0].Index, vertexes[2].Index, vertexes[3].Index };
+                        temp = new List<int> { vertexes[0].Index, vertexes[1].Index, vertexes[2].Index, vertexes[0].Index, vertexes[2].Index, vertexes[3].Index };
                         break;
                     case Direction.Back:
-                        _list = GetTriangles(vertexes, true);
+                        temp = GetTriangles(vertexes, true);
                         break;
                     default:
-                        _list = GetTriangles(vertexes, false);
+                        temp = GetTriangles(vertexes, false);
                         break;
                 }
 
-                list.Add(_list);
-                length += _list.Count;
+                list.Add(temp);
+                length += temp.Count;
             }
 
             var index = 0;

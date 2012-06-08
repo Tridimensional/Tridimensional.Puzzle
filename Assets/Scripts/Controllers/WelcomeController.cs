@@ -12,7 +12,7 @@ public class WelcomeController : MonoBehaviour
 
     void Awake()
     {
-        _logoTexture = Resources.Load("Logo/Logo") as Texture2D;
+        _logoTexture = Resources.Load("Image/Logo/256") as Texture2D;
         _logoTextureRect = GetCompatibleLogoRect();
         _backgroundColor = GlobalConfiguration.BackgroundColor;
     }
@@ -42,6 +42,8 @@ public class WelcomeController : MonoBehaviour
 
     Rect GetCompatibleLogoRect()
     {
-        return new Rect((Screen.width - _logoTexture.width) / 2, (Screen.height - _logoTexture.height) / 2, _logoTexture.width, _logoTexture.height);
+        var height = Screen.height * 0.4f;
+        var width = height * _logoTexture.width / _logoTexture.height;
+        return new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
     }
 }

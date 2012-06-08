@@ -8,6 +8,7 @@ namespace Tridimensional.Puzzle.IOC.BindingModules
 	{
         public override void Load()
         {
+            Bind<IAudioService>().To<AudioService>().InSingletonScope();
             Bind<IPieceService>().To<PieceService>().InSingletonScope();
             Bind<IGraphicsService>().To<GraphicsService>().InSingletonScope();
             Bind<IModelService>().To<ModelService>().InSingletonScope();
