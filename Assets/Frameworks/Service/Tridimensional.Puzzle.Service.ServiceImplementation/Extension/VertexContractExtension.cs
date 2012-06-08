@@ -5,14 +5,14 @@ namespace Tridimensional.Puzzle.Service.Contract
 {
     public static class VertexContractExtension
     {
-        public static Vector3 ToVector3(this VertexContract vertex)
+        public static Vector3 ToVector3(this VertexContract vertexContract)
         {
-            return new Vector3 { x = vertex.x, y = vertex.y, z = vertex.z };
+            return vertexContract.Position;
         }
 
-        public static Vector2 ToVector2(this VertexContract vertex)
+        public static Vector2 ToVector2(this VertexContract vertexContract)
         {
-            return new Vector2 { x = vertex.x, y = vertex.y };
+            return vertexContract.Position.ToVector2();
         }
 
         public static VertexContract[] Link(this VertexContract[] source, int startIndex)

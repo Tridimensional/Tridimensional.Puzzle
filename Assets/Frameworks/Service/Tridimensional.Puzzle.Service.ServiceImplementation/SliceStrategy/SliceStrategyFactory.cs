@@ -4,11 +4,11 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
 	public class SliceStrategyFactory
 	{
-        public AbstractSliceStrategy Create(SliceProgram sliceProgram)
+        public AbstractSliceStrategy Create(SlicePattern slicePattern)
         {
-            switch (sliceProgram)
+            switch (slicePattern)
             {
-                case SliceProgram.Random:
+                case SlicePattern.Random:
                     return new RandomSliceStrategy();
                 default:
                     return new DefaultSliceStrategy();

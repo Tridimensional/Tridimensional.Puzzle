@@ -1,6 +1,6 @@
 namespace Tridimensional.Puzzle.Foundation.Enumeration
 {
-    public enum GameDifficulty
+    public enum Difficulty
 	{
 		Easy,
 		Middle,

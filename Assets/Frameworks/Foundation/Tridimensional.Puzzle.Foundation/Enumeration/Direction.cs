@@ -2,7 +2,8 @@
 {
     public enum Direction
     {
-        Inward,
-        Downward
+        Front,
+        Side,
+        Back
     }
 }

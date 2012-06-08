@@ -1,5 +1,4 @@
-﻿using System;
-using Tridimensional.Puzzle.Service.Contract;
+﻿using Tridimensional.Puzzle.Service.Contract;
 
 namespace UnityEngine
 {
@@ -7,7 +6,12 @@ namespace UnityEngine
     {
         public static VertexContract ToVertexContract(this Vector3 vector3)
         {
-            return new VertexContract { x = vector3.x, y = vector3.y, z = vector3.z };
+            return new VertexContract { Position = vector3 };
+        }
+
+        public static Vector2 ToVector2(this Vector3 vector3)
+        {
+            return new Vector2(vector3.x, vector3.y);
         }
     }
 }

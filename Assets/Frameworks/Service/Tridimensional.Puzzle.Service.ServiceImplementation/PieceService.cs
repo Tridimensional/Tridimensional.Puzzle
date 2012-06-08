@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Tridimensional.Puzzle.Foundation;
 using Tridimensional.Puzzle.Foundation.Entity;
+using Tridimensional.Puzzle.Foundation.Enumeration;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
@@ -42,13 +43,11 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     mappingMesh.vertices = topVertexes;
                     mappingMesh.triangles = GetTriangles(topVertexes);
                     mappingMesh.uv = GetUVs(vertexes, range);
-                    mappingMesh.tangents = new Vector4[mappingMesh.vertexCount];
                     mappingMesh.RecalculateNormals();
 
                     var backseatMesh = new Mesh();
                     backseatMesh.vertices = GetVertices(backseatSurfaces);
                     backseatMesh.triangles = GetTriangles(backseatSurfaces);
-                    backseatMesh.uv = new Vector2[backseatMesh.vertexCount];
                     backseatMesh.RecalculateNormals();
 
                     result[i, j] = new PieceContract { MappingMesh = mappingMesh, BackseatMesh = backseatMesh, Position = center - range / 2 };
@@ -71,71 +70,87 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             if (points != null) { for (var i = 0; i < points.Length; i++) { vertexes.Add(points[i].ToVector2(conversionRate)); } }
 
             vertexes.Add(sliceContract.Vertexes[x + 1, y + 1].ToVector2(conversionRate));
-            points = VectorUtility.Reverse(sliceContract.Lines[x, y + 1, x + 1, y + 1]);
+            points = Point.Reverse(sliceContract.Lines[x, y + 1, x + 1, y + 1]);
             if (points != null) { for (var i = 0; i < points.Length; i++) { vertexes.Add(points[i].ToVector2(conversionRate)); } }
 
             vertexes.Add(sliceContract.Vertexes[x, y + 1].ToVector2(conversionRate));
-            points = VectorUtility.Reverse(sliceContract.Lines[x, y, x, y + 1]);
+            points = Point.Reverse(sliceContract.Lines[x, y, x, y + 1]);
             if (points != null) { for (var i = 0; i < points.Length; i++) { vertexes.Add(points[i].ToVector2(conversionRate)); } }
 
             return vertexes.ToArray();
         }
 
-        private List<VertexContract[]> GetSurfaces(Vector3[] topVertexes, Vector3[] bottomVertexes)
+        private List<SurfaceContract> GetSurfaces(Vector3[] topVertexes, Vector3[] bottomVertexes)
         {
             var endIndex = 0;
-            var surfaces = new List<VertexContract[]>();
+            var surfaces = new List<SurfaceContract>();
 
             for (var i = 0; i < topVertexes.Length; i++)
             {
                 endIndex = i < topVertexes.Length - 1 ? i + 1 : 0;
-                JoinSurface(surfaces, ConvertToVertexContracts(topVertexes[i], topVertexes[endIndex], bottomVertexes[endIndex], bottomVertexes[i]));
+                surfaces.Join(ConvertToVertexContracts(topVertexes[i], bottomVertexes[i], bottomVertexes[endIndex], topVertexes[endIndex]), Direction.Side);
             }
 
-            JoinSurface(surfaces, ConvertToVertexContracts(bottomVertexes));
+            surfaces.Join(ConvertToVertexContracts(bottomVertexes), Direction.Back);
 
             return surfaces;
         }
 
-        private Vector3[] GetVertices(List<VertexContract[]> surfaces)
+        private Vector3[] GetVertices(List<SurfaceContract> surfaces)
         {
             var length = 0;
-            surfaces.ForEach(refer => length += refer.Length);
+            surfaces.ForEach(refer => length += refer.Vertexes.Length);
 
             var index = 0;
             var result = new Vector3[length];
 
             foreach (var surface in surfaces)
             {
-                for (var i = 0; i < surface.Length; i++)
+                for (var i = 0; i < surface.Vertexes.Length; i++)
                 {
-                    result[index++] = surface[i].ToVector3();
+                    result[index++] = surface.Vertexes[i].ToVector3();
                 }
             }
 
             return result;
         }
 
-        private int[] GetTriangles(List<VertexContract[]> surfaces)
+        private int[] GetTriangles(List<SurfaceContract> surfaces)
         {
             var length = 0;
             var list = new List<List<int>>();
+            var _list = null as List<int>;
+            var vertexes = null as VertexContract[];
 
             foreach (var surface in surfaces)
             {
-                var _list = GetTriangles(surface);
-                length += _list.Count;
+                vertexes = surface.Vertexes;
+
+                switch (surface.Direction)
+                {
+                    case Direction.Side:
+                        _list = new List<int> { vertexes[0].Index, vertexes[1].Index, vertexes[2].Index, vertexes[0].Index, vertexes[2].Index, vertexes[3].Index };
+                        break;
+                    case Direction.Back:
+                        _list = GetTriangles(vertexes, true);
+                        break;
+                    default:
+                        _list = GetTriangles(vertexes, false);
+                        break;
+                }
+
                 list.Add(_list);
+                length += _list.Count;
             }
 
-            var index = length - 1;
+            var index = 0;
             var result = new int[length];
 
             for (var i = 0; i < list.Count; i++)
             {
                 for (var j = 0; j < list[i].Count; j++)
                 {
-                    result[index--] = list[i][j];
+                    result[index++] = list[i][j];
                 }
             }
 
@@ -144,10 +159,10 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private int[] GetTriangles(Vector3[] vertexes)
         {
-            return GetTriangles(ConvertToVertexContracts(vertexes).Link(0)).ToArray();
+            return GetTriangles(ConvertToVertexContracts(vertexes).Link(0), false).ToArray();
         }
 
-        private List<int> GetTriangles(VertexContract[] vertexes)
+        private List<int> GetTriangles(VertexContract[] vertexes, bool reverse)
         {
             var pointer = vertexes[0];
             var triangles = new List<int>();
@@ -162,18 +177,36 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     if (pointer.Index == index) { break; }
                 }
 
-                triangles.Add(pointer.Previous.Index);
-                triangles.Add(pointer.Index);
-                triangles.Add(pointer.Next.Index);
+                if (reverse)
+                {
+                    triangles.Add(pointer.Next.Index);
+                    triangles.Add(pointer.Index);
+                    triangles.Add(pointer.Previous.Index);
+                }
+                else
+                {
+                    triangles.Add(pointer.Previous.Index);
+                    triangles.Add(pointer.Index);
+                    triangles.Add(pointer.Next.Index);
+                }
 
                 pointer.Next.Previous = pointer.Previous;
                 pointer.Previous.Next = pointer.Next;
                 pointer = pointer.Next;
             }
 
-            triangles.Add(pointer.Previous.Index);
-            triangles.Add(pointer.Index);
-            triangles.Add(pointer.Next.Index);
+            if (reverse)
+            {
+                triangles.Add(pointer.Next.Index);
+                triangles.Add(pointer.Index);
+                triangles.Add(pointer.Previous.Index);
+            }
+            else
+            {
+                triangles.Add(pointer.Previous.Index);
+                triangles.Add(pointer.Index);
+                triangles.Add(pointer.Next.Index);
+            }
 
             return triangles;
         }
@@ -190,18 +223,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return vectors;
         }
 
-        private void JoinSurface(List<VertexContract[]> surfaces, VertexContract[] vertexes)
-        {
-            if (vertexes != null) { surfaces.Add(vertexes.Link(GetStartIndex(surfaces))); }
-        }
-
-        private int GetStartIndex(List<VertexContract[]> surfaces)
-        {
-            var startIndex = 0;
-            foreach (var surface in surfaces) { startIndex += surface == null ? 0 : surface.Length; }
-            return startIndex;
-        }
-
         private VertexContract[] ConvertToVertexContracts(params Vector3[] vector3s)
         {
             return Array.ConvertAll<Vector3, VertexContract>(vector3s, refer => refer.ToVertexContract());
@@ -209,20 +230,20 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private float GetIncludeAngle(VertexContract vertex)
         {
-            return VectorUtility.GetAngle(new Vector2(vertex.Previous.x - vertex.x, vertex.Previous.y - vertex.y), new Vector2(vertex.Next.x - vertex.x, vertex.Next.y - vertex.y));
+            return VectorUtility.GetAngle((vertex.Previous.Position - vertex.Position).ToVector2(), (vertex.Next.Position - vertex.Position).ToVector2());
         }
 
         private bool ExistsIncludedVertex(VertexContract vertex)
         {
-            var a = new Vector2(vertex.x, vertex.y);
-            var b = new Vector2(vertex.Previous.x, vertex.Previous.y);
-            var c = new Vector2(vertex.Next.x, vertex.Next.y);
+            var a = vertex.Position.ToVector2();
+            var b = vertex.Previous.Position.ToVector2();
+            var c = vertex.Next.Position.ToVector2();
 
             var pointer = vertex.Next.Next;
 
             while (pointer.Next.Index != vertex.Index)
             {
-                var o = new Vector2(pointer.x, pointer.y);
+                var o = pointer.Position.ToVector2();
                 if (VectorUtility.OntheSameSide(o, c, a, b) && VectorUtility.OntheSameSide(o, a, b, c) && VectorUtility.OntheSameSide(o, b, a, c)) { return true; }
                 pointer = pointer.Next;
             }

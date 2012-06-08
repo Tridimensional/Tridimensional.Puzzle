@@ -20,9 +20,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             _sliceStrategyFactory = sliceStrategyFactory;
         }
 
-        public LayoutContract GetProperLayout(Texture2D image, GameDifficulty gameDifficulty)
+        public LayoutContract GetProperLayout(Texture2D image, Difficulty difficulty)
         {
-            return GetProperLayout(image.width, image.height, gameDifficulty);
+            return GetProperLayout(image.width, image.height, difficulty);
         }
 
         public LayoutContract GetProperLayout(Texture2D image, int count)
@@ -30,9 +30,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return GetProperLayout(image.width, image.height, count);
         }
 
-        public LayoutContract GetProperLayout(int width, int height, GameDifficulty gameDifficulty)
+        public LayoutContract GetProperLayout(int width, int height, Difficulty difficulty)
         {
-            var puzzleCount = gameDifficulty.ToProperPuzzleCount();
+            var puzzleCount = difficulty.ToProperPuzzleCount();
             return GetProperLayout(width, height, puzzleCount);
         }
 
@@ -50,9 +50,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             };
         }
 
-        public SliceContract GetSlice(Texture2D image, LayoutContract layoutContract, SliceProgram sliceProgram)
+        public SliceContract GetSlice(Texture2D image, LayoutContract layoutContract, SlicePattern slicePattern)
         {
-            var sliceStrategy = _sliceStrategyFactory.Create(sliceProgram);
+            var sliceStrategy = _sliceStrategyFactory.Create(slicePattern);
             return sliceStrategy.GetSlice(image, layoutContract);
         }
 

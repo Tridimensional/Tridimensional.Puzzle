@@ -1,5 +1,4 @@
-﻿using System;
-using Tridimensional.Puzzle.Foundation.Entity;
+﻿using Tridimensional.Puzzle.Foundation.Entity;
 using UnityEngine;
 
 namespace Tridimensional.Puzzle.Foundation.Utility
@@ -34,14 +33,6 @@ namespace Tridimensional.Puzzle.Foundation.Utility
             var C = -(a.y * B + a.x * A);
 
             return (A * p1.x + B * p1.y + C) * (A * p2.x + B * p2.y + C) >= 0;
-        }
-
-        public static Point[] Reverse(Point[] points)
-        {
-            if (points == null) { return null; }
-            var result = new Point[points.Length];
-            for (var i = 0; i < points.Length; i++) { result[i] = points[points.Length - i - 1]; }
-            return result;
         }
     }
 }

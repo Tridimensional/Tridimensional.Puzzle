@@ -20,7 +20,7 @@ namespace Tridimensional.Puzzle.Foundation.Entity
             else { return null; }
         }
 
-        public static string GenerateKey(int x1, int y1, int x2, int y2)
+        private static string GenerateKey(int x1, int y1, int x2, int y2)
         {
             return string.Format("{0},{1},{2},{3}", x1, y1, x2, y2);
         }

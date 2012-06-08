@@ -1,16 +1,16 @@
 ﻿namespace Tridimensional.Puzzle.Foundation.Enumeration
 {
-	public static class GameDifficultyExtension
+	public static class DifficultyExtension
 	{
-        public static int ToProperPuzzleCount(this GameDifficulty gameDifficulty)
+        public static int ToProperPuzzleCount(this Difficulty difficulty)
         {
-            switch (gameDifficulty)
+            switch (difficulty)
             {
-                case GameDifficulty.Easy:
+                case Difficulty.Easy:
                     return 20;
-                case GameDifficulty.Middle:
+                case Difficulty.Middle:
                     return 50;
-                case GameDifficulty.Hard:
+                case Difficulty.Hard:
                     return 100;
                 default:
                     return 200;

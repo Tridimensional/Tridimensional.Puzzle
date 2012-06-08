@@ -50,7 +50,7 @@ public class AnimationController : MonoBehaviour
         _backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
 
         var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
-        var sliceContract = _modelService.GetSlice(_backdropImage, layoutContract, SliceProgram.Default);
+        var sliceContract = _modelService.GetSlice(_backdropImage, layoutContract, SlicePattern.Default);
         var pieceContracts = _modelService.GeneratePieceContracts(sliceContract);
 
         _rows = layoutContract.Rows;
