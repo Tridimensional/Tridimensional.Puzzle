@@ -1,8 +1,18 @@
-﻿using Tridimensional.Puzzle.Foundation;
+﻿using System;
+using System.IO;
+using System.Xml;
+using Tridimensional.Puzzle.Foundation;
+using Tridimensional.Puzzle.Foundation.Entity;
+using Tridimensional.Puzzle.Service.Contract;
+using Tridimensional.Puzzle.Service.IServiceProvider;
 using UnityEngine;
+using Tridimensional.Puzzle.IOC;
 
 public class CrossingController : MonoBehaviour
 {
+    ICrossingService _crossingService;
+    MultiTree<CrossContract> _crossingConfigTree;
+
     void Awake()
     {
         InitializationEnvironment();
@@ -30,6 +40,7 @@ public class CrossingController : MonoBehaviour
 
     private void InitializationEnvironment()
     {
-
+        _crossingService = InjectionRepository.Instance.Get<ICrossingService>();
+        _crossingConfigTree = _crossingService.GetConfigurationTree();
     }
 }
