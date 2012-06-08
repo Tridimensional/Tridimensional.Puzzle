@@ -15,6 +15,8 @@ namespace Tridimensional.Puzzle.Foundation.Entity
                 Children = new List<MultiTree<T>>();
             }
 
+            node.Parent = this;
+
             Children.Add(node);
         }
 	}
