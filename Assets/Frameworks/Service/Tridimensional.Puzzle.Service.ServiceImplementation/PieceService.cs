@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Core.Enumeration;
-using Tridimensional.Puzzle.Foundation;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;

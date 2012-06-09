@@ -1,6 +1,6 @@
 ﻿using System;
+using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.Core.Enumeration;
-using Tridimensional.Puzzle.Foundation;
 using UnityEngine;
 
 public class WelcomeController : MonoBehaviour

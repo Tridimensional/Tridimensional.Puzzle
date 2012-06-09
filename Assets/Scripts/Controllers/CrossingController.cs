@@ -1,4 +1,4 @@
-﻿using Tridimensional.Puzzle.Foundation;
+﻿using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.IOC;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using UnityEngine;

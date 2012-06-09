@@ -1,7 +1,6 @@
-using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
 
-namespace Tridimensional.Puzzle.Foundation
+namespace Tridimensional.Puzzle.Core
 {
 	public class GlobalConfiguration
 	{

@@ -1,5 +1,5 @@
-﻿using Tridimensional.Puzzle.Core.Enumeration;
-using Tridimensional.Puzzle.Foundation;
+﻿using Tridimensional.Puzzle.Core;
+using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.IOC;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.UI.ViewModel;
