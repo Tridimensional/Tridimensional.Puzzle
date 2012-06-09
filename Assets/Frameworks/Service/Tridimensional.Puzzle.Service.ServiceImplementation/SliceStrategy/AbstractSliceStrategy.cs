@@ -92,7 +92,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             var sin = Mathf.Sin(angle);
             var cos = Mathf.Cos(angle);
 
-            return new Point(Convert.ToInt32(point.X * cos - point.Y * sin), Convert.ToInt32(point.X * sin + point.Y * cos)) * zoom + translation;
+            return new Point(Mathf.RoundToInt(point.X * cos - point.Y * sin), Mathf.RoundToInt(point.X * sin + point.Y * cos)) * zoom + translation;
         }
     }
 }

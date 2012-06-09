@@ -1,8 +1,6 @@
-﻿using System;
-using Tridimensional.Puzzle.Core.Entity;
+﻿using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Service.Contract;
 using UnityEngine;
-using System.Text;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 {
@@ -81,7 +79,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 
         private int GetRandomOffset(int range)
         {
-            return Convert.ToInt32(range * (1 - UnityEngine.Random.value * 2));
+            return Mathf.RoundToInt(range * (1 - UnityEngine.Random.value * 2));
         }
     }
 }

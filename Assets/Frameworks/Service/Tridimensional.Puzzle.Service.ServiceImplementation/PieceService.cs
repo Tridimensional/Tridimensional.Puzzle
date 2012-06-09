@@ -12,6 +12,24 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
     public class PieceService : IPieceService
     {
+        #region Instance
+
+        static IPieceService _instance;
+
+        public static IPieceService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new PieceService();
+                }
+                return _instance;
+            }
+        }
+
+        #endregion
+
         public PieceContract[,] GeneratePiece(SliceContract sliceContract)
         {
             var rows = sliceContract.Vertexes.GetLength(0) - 1;

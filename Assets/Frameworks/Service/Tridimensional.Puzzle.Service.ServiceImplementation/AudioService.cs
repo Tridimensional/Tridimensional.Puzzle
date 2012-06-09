@@ -5,6 +5,24 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
     public class AudioService : IAudioService
     {
+        #region Instance
+
+        static IAudioService _instance;
+
+        public static IAudioService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new AudioService();
+                }
+                return _instance;
+            }
+        }
+
+        #endregion
+
         public AudioSource Play(AudioClip audioClip, Transform emitter, float volume, float pitch)
         {
             var go = new GameObject("Audio");

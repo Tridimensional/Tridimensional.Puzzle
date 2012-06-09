@@ -8,6 +8,24 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
     public class GraphicsService : IGraphicsService
     {
+        #region Instance
+
+        static IGraphicsService _instance;
+
+        public static IGraphicsService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new GraphicsService();
+                }
+                return _instance;
+            }
+        }
+
+        #endregion
+
         public Texture2D GenerateNormalMap(Texture2D heightMap)
         {
             var dx = 0f; var dy = 0f; var strength = 0.5f;

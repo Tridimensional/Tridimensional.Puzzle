@@ -13,11 +13,29 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         IGraphicsService _graphicsService;
         SliceStrategyFactory _sliceStrategyFactory;
 
-        public ModelService(IPieceService pieceService, IGraphicsService graphicsService, SliceStrategyFactory sliceStrategyFactory)
+        #region Instance
+
+        static IModelService _instance;
+
+        public static IModelService Instance
         {
-            _pieceService = pieceService;
-            _graphicsService = graphicsService;
-            _sliceStrategyFactory = sliceStrategyFactory;
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new ModelService();
+                }
+                return _instance;
+            }
+        }
+
+        #endregion
+
+        public ModelService()
+        {
+            _pieceService = PieceService.Instance;
+            _graphicsService = GraphicsService.Instance;
+            _sliceStrategyFactory = new SliceStrategyFactory();
         }
 
         public LayoutContract GetProperLayout(Texture2D image, Difficulty difficulty)

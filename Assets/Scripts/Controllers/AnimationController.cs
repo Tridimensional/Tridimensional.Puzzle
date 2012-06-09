@@ -1,7 +1,7 @@
 ﻿using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.Core.Enumeration;
-using Tridimensional.Puzzle.IOC;
 using Tridimensional.Puzzle.Service.IServiceProvider;
+using Tridimensional.Puzzle.Service.ServiceImplementation;
 using Tridimensional.Puzzle.UI.ViewModel;
 using UnityEngine;
 
@@ -49,7 +49,7 @@ public class AnimationController : MonoBehaviour
 
     void InitializationEnvironment()
     {
-        _modelService = InjectionRepository.Instance.Get<IModelService>();
+        _modelService = ModelService.Instance;
         _backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
 
         var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);

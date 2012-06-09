@@ -1,6 +1,6 @@
 ﻿using Tridimensional.Puzzle.Core;
-using Tridimensional.Puzzle.IOC;
 using Tridimensional.Puzzle.Service.IServiceProvider;
+using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
 
 public class CrossingController : MonoBehaviour
@@ -34,6 +34,6 @@ public class CrossingController : MonoBehaviour
 
     private void InitializationEnvironment()
     {
-        _crossingService = InjectionRepository.Instance.Get<ICrossingService>();
+        _crossingService = CrossingService.Instance;
     }
 }
