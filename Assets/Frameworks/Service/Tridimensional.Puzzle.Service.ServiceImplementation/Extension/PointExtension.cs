@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Tridimensional.Puzzle.Foundation.Entity
+namespace Tridimensional.Puzzle.Core.Entity
 {
 	public static  class PointExtension
 	{

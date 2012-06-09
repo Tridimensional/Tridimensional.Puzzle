@@ -1,4 +1,4 @@
-﻿using Tridimensional.Puzzle.Foundation.Entity;
+﻿using Tridimensional.Puzzle.Core.Entity;
 
 namespace Tridimensional.Puzzle.Service.Contract
 {

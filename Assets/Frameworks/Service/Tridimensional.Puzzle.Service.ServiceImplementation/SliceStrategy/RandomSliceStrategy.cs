@@ -1,5 +1,5 @@
 ﻿using System;
-using Tridimensional.Puzzle.Foundation.Entity;
+using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Service.Contract;
 using UnityEngine;
 using System.Text;

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Tridimensional.Puzzle.Foundation.Enumeration;
+using Tridimensional.Puzzle.Core.Enumeration;
 
 namespace Tridimensional.Puzzle.Service.Contract
 {

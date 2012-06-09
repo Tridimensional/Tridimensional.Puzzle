@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using Tridimensional.Puzzle.Foundation.Entity;
-using Tridimensional.Puzzle.Foundation.Enumeration;
+using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.Contract;
 using UnityEngine;
 

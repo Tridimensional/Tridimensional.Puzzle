@@ -1,4 +1,4 @@
-﻿using Tridimensional.Puzzle.Foundation.Entity;
+﻿using Tridimensional.Puzzle.Core.Entity;
 using UnityEngine;
 
 namespace Tridimensional.Puzzle.Foundation.Utility

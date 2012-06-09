@@ -1,5 +1,5 @@
 using System;
-using Tridimensional.Puzzle.Foundation.Enumeration;
+using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy;

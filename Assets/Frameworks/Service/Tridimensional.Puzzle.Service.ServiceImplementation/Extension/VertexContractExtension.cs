@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Tridimensional.Puzzle.Foundation.Entity;
 
 namespace Tridimensional.Puzzle.Service.Contract
 {

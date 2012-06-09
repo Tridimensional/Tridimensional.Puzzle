@@ -1,4 +1,4 @@
-﻿namespace Tridimensional.Puzzle.Foundation.Enumeration
+﻿namespace Tridimensional.Puzzle.Core.Enumeration
 {
 	public static class DifficultyExtension
 	{
