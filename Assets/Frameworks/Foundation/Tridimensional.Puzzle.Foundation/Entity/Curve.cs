@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Foundation.Entity
 {
-    public class LineDictionary
+    public class Curve
     {
         Dictionary<string, Point[]> _dictionary = new Dictionary<string, Point[]>();
 

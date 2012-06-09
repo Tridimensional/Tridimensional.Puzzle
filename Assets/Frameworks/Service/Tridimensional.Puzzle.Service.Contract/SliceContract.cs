@@ -7,6 +7,6 @@ namespace Tridimensional.Puzzle.Service.Contract
         public int Width { get; set; }
         public int Height { get; set; }
         public Point[,] Vertexes { get; set; }
-        public LineDictionary Lines { get; set; }
+        public Curve Lines { get; set; }
 	}
 }

@@ -21,9 +21,9 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             return new SliceContract { Vertexes = vertexes, Lines = lines, Width = scale.X, Height = scale.Y };
         }
 
-        protected LineDictionary GetLines(Point[,] vertexes)
+        protected Curve GetLines(Point[,] vertexes)
         {
-            var lineDictionary = new LineDictionary();
+            var curve = new Curve();
             var rows = vertexes.GetLength(0);
             var columns = vertexes.GetLength(1);
 
@@ -31,17 +31,17 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             {
                 for (var j = 0; j < columns - 1; j++)
                 {
-                    if (i == 0) { SetLineDictionary(lineDictionary, i, j, i, j + 1); }
-                    else { SetLineDictionary(lineDictionary, i, j, i, j + 1, vertexes); }
-                    if (j == 0) { SetLineDictionary(lineDictionary, i, j, i + 1, j); }
-                    else { SetLineDictionary(lineDictionary, i, j, i + 1, j, vertexes); }
+                    if (i == 0) { SetCurve(curve, i, j, i, j + 1); }
+                    else { SetCurve(curve, i, j, i, j + 1, vertexes); }
+                    if (j == 0) { SetCurve(curve, i, j, i + 1, j); }
+                    else { SetCurve(curve, i, j, i + 1, j, vertexes); }
                 }
             }
 
-            for (var i = 0; i < rows - 1; i++) { SetLineDictionary(lineDictionary, i, columns - 1, i + 1, columns - 1); }
-            for (var j = 0; j < columns - 1; j++) { SetLineDictionary(lineDictionary, rows - 1, j, rows - 1, j + 1); }
+            for (var i = 0; i < rows - 1; i++) { SetCurve(curve, i, columns - 1, i + 1, columns - 1); }
+            for (var j = 0; j < columns - 1; j++) { SetCurve(curve, rows - 1, j, rows - 1, j + 1); }
 
-            return lineDictionary;
+            return curve;
         }
 
         private Point GetSliceScale(Texture2D image, LayoutContract layoutContract)
@@ -56,14 +56,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             }
         }
 
-        private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2)
+        private void SetCurve(Curve curve, int x1, int y1, int x2, int y2)
         {
-            lineDictionary[x1, y1, x2, y2] = null;
+            curve[x1, y1, x2, y2] = null;
         }
 
-        private void SetLineDictionary(LineDictionary lineDictionary, int x1, int y1, int x2, int y2, Point[,] vertexes)
+        private void SetCurve(Curve curve, int x1, int y1, int x2, int y2, Point[,] vertexes)
         {
-            lineDictionary[x1, y1, x2, y2] = GetConnectPoints(vertexes[x1, y1], vertexes[x2, y2], (x1 + y1) % 2 == 0);
+            curve[x1, y1, x2, y2] = GetConnectPoints(vertexes[x1, y1], vertexes[x2, y2], (x1 + y1) % 2 == 0);
         }
 
         private Point[] GetConnectPoints(Point head, Point tail, bool needFlip)

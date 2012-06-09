@@ -5,6 +5,5 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
 	public interface ICrossingService
 	{
-        MultiTree<CrossContract> GetConfigurationTree();
     }
 }
