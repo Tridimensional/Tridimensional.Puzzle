@@ -3,6 +3,7 @@ using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using UnityEngine;
+using Tridimensional.Puzzle.Foundation.Utility;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
@@ -26,25 +27,28 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #endregion
 
-        public Texture2D GenerateNormalMap(Texture2D heightMap)
+        public Texture2D GenerateNormalMap(Texture2D heightMap, float strength)
         {
-            var dx = 0f; var dy = 0f; var strength = 0.5f;
+            var dx = 0f; var dy = 0f;
             var left = 0f; var right = 0f; var up = 0f; var down = 0f;
+
+            strength = Mathf.Clamp(strength, 0f, 10f);
 
             var result = new Texture2D(heightMap.width, heightMap.height, TextureFormat.ARGB32, true);
 
-            for (var i = 0; i < result.height; i++)
+            for (var i = 0; i < result.width; i++)
             {
-                for (var j = 0; j < result.width; j++)
+                for (var j = 0; j < result.height; j++)
                 {
-                    left = heightMap.GetPixel(j - 1, i).grayscale * strength;
-                    right = heightMap.GetPixel(j + 1, i).grayscale * strength;
-                    up = heightMap.GetPixel(j, i - 1).grayscale * strength;
-                    down = heightMap.GetPixel(j, i + 1).grayscale * strength;
+                    left = heightMap.GetPixel(i - 1, j).grayscale * strength;
+                    right = heightMap.GetPixel(i + 1, j).grayscale * strength;
+                    up = heightMap.GetPixel(i, j - 1).grayscale * strength;
+                    down = heightMap.GetPixel(i, j + 1).grayscale * strength;
+
                     dx = (left - right) * 0.5f;
                     dy = (down - up) * 0.5f;
 
-                    result.SetPixel(j, i, new Color(dx, dy, 1.0f, dx));
+                    result.SetPixel(i, j, new Color(dx, dy, 1f, dx));
                 }
             }
 

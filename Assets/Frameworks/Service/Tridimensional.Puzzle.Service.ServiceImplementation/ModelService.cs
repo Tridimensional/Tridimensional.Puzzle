@@ -35,7 +35,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         {
             _pieceService = PieceService.Instance;
             _graphicsService = GraphicsService.Instance;
-            _sliceStrategyFactory = new SliceStrategyFactory();
+            _sliceStrategyFactory = SliceStrategyFactory.Instance;
         }
 
         public LayoutContract GetProperLayout(Texture2D image, Difficulty difficulty)
@@ -106,7 +106,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         public Texture2D GenerateNormalMap(SliceContract sliceContract)
         {
             var heightMap = _graphicsService.GenerateHeightMap(sliceContract);
-            return _graphicsService.GenerateNormalMap(heightMap);
+            return _graphicsService.GenerateNormalMap(heightMap, 0.5f);
         }
     }
 }
