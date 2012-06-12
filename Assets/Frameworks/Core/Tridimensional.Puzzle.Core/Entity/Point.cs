@@ -44,13 +44,5 @@ namespace Tridimensional.Puzzle.Core.Entity
             var y = p1.Y - p2.Y;
             return Mathf.Sqrt(x * x + y * y);
         }
-
-        public static Point[] Reverse(Point[] points)
-        {
-            if (points == null) { return null; }
-            var result = new Point[points.Length];
-            for (var i = 0; i < points.Length; i++) { result[i] = points[points.Length - i - 1]; }
-            return result;
-        }
     }
 }
