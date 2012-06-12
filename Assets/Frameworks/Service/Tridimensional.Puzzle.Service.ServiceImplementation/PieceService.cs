@@ -61,7 +61,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     mappingMesh.RecalculateNormals();
                     //mappingMesh.ReCalculateTangents();
 
-                    var bottomVertices = bottomVertexes;
                     var bottomTriangles = Reverse<int>(mappingMesh.triangles);
                     var sideVertices = GetSideVertices(topVertexes, bottomVertexes);
                     var sideTriangles = GetSideTriangles(vertexes.Length);
