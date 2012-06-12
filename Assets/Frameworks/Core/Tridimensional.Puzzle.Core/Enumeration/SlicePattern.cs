@@ -8,4 +8,3 @@ namespace Tridimensional.Puzzle.Core.Enumeration
         Random
 	}
 }
-

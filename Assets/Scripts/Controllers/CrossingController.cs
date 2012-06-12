@@ -1,4 +1,5 @@
 ﻿using Tridimensional.Puzzle.Core;
+using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
@@ -6,34 +7,31 @@ using UnityEngine;
 public class CrossingController : MonoBehaviour
 {
     ICrossingService _crossingService;
+    ISceneService _sceneService;
 
     void Awake()
     {
+        _crossingService = CrossingService.Instance;
+        _sceneService = SceneService.Instance;
+
+        _sceneService.InitializationLight();
+        _sceneService.InitializationCamera(gameObject.camera);
+
         InitializationEnvironment();
-        InitializationCamera();
-        InitializationLight();
-    }
-
-    private void InitializationLight()
-    {
-        var go = new GameObject("Light");
-        var light = go.AddComponent<Light>();
-
-        light.intensity = 0.5f;
-        light.type = LightType.Directional;
-        light.transform.position = new Vector3(0, 0, -1);
-        light.transform.rotation = Quaternion.Euler(30, 30, 0);
-    }
-
-    private void InitializationCamera()
-    {
-        camera.backgroundColor = GlobalConfiguration.BackgroundColor;
-        camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
-        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
     }
 
     private void InitializationEnvironment()
     {
-        _crossingService = CrossingService.Instance;
+        var gameContract = GameCommander.OpenNew();
+
+        gameContract.ImageSource = "local";
+        gameContract.OnlineType = OnlineType.Local;
+        gameContract.SlicePattern = SlicePattern.Default;
+        gameContract.Difficulty = Difficulty.Middle;
+    }
+
+    void Update()
+    {
+        Application.LoadLevel(LevelName.Loading.ToString());
     }
 }

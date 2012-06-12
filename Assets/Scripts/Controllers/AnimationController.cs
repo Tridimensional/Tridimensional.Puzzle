@@ -17,6 +17,7 @@ public class AnimationController : MonoBehaviour
     float _straightSpeed;
     float _visionWidth;
     IModelService _modelService;
+    ISceneService _sceneService;
     int _rows;
     int _columns;
     Texture2D _backdropImage;
@@ -24,38 +25,24 @@ public class AnimationController : MonoBehaviour
 
     void Awake()
     {
+        _modelService = ModelService.Instance;
+        _sceneService = SceneService.Instance;
+
+        _sceneService.InitializationLight();
+        _sceneService.InitializationCamera(camera.camera);
+
         InitializationEnvironment();
-        InitializationCamera();
-        InitializationLight();
-    }
-
-    void InitializationLight()
-    {
-        var go = new GameObject("Light");
-        var light = go.AddComponent<Light>();
-
-        light.intensity = 0.5f;
-        light.type = LightType.Directional;
-        light.transform.position = new Vector3(0, 0, -1);
-        light.transform.rotation = Quaternion.Euler(30, 30, 0);
-    }
-
-    void InitializationCamera()
-    {
-        camera.backgroundColor = GlobalConfiguration.BackgroundColor;
-        camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
-        camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
     }
 
     void InitializationEnvironment()
     {
-        _modelService = ModelService.Instance;
         _backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
 
         var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
         var sliceContract = _modelService.GetSlice(_backdropImage, layoutContract, SlicePattern.Default);
         var pieceContracts = _modelService.GeneratePieceContracts(sliceContract);
 
+        _backdropNormalMap = _modelService.GenerateNormalMap(sliceContract);
         _rows = layoutContract.Rows;
         _columns = layoutContract.Columns;
         _visionWidth = GlobalConfiguration.PictureHeightInMeter * Screen.width / Screen.height;
@@ -63,7 +50,6 @@ public class AnimationController : MonoBehaviour
         _flightHeight = _pieceWidth;
         _circleDistance = Mathf.PI * _flightHeight / 2;
         _backdropPieceViewModels = new BackdropPieceViewModel[layoutContract.Rows, layoutContract.Columns];
-        _backdropNormalMap = _modelService.GenerateNormalMap(sliceContract);
         _straightSpeed = GlobalConfiguration.PictureHeightInMeter;
         _corneringSpeed = _straightSpeed * 0.2f;
         _rotationSpeed = 45 / _pieceWidth;
