@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
-    public class SceneService : MonoBehaviour, ISceneService
+    public class SceneService : ISceneService
 	{
         #region Instance
 
