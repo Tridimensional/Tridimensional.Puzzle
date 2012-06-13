@@ -8,7 +8,6 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
 	public interface ISceneService
 	{
-        void InitializationLight();
-        void InitializationCamera(Camera camera);
+        void Initialize(Camera camera);
     }
 }

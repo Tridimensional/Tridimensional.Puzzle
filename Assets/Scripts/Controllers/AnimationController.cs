@@ -28,13 +28,12 @@ public class AnimationController : MonoBehaviour
         _modelService = ModelService.Instance;
         _sceneService = SceneService.Instance;
 
-        _sceneService.InitializationLight();
-        _sceneService.InitializationCamera(camera.camera);
+        _sceneService.Initialize(gameObject.camera);
 
-        InitializationEnvironment();
+        InitializeEnvironment();
     }
 
-    void InitializationEnvironment()
+    void InitializeEnvironment()
     {
         _backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
 

@@ -14,13 +14,12 @@ public class CrossingController : MonoBehaviour
         _crossingService = CrossingService.Instance;
         _sceneService = SceneService.Instance;
 
-        _sceneService.InitializationLight();
-        _sceneService.InitializationCamera(gameObject.camera);
+        _sceneService.Initialize(gameObject.camera);
 
-        InitializationEnvironment();
+        InitializeEnvironment();
     }
 
-    private void InitializationEnvironment()
+    private void InitializeEnvironment()
     {
         var gameContract = GameCommander.OpenNew();
 

@@ -24,19 +24,15 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #endregion
 
-        public void InitializationLight()
+        public void Initialize(Camera camera)
         {
-            var go = new GameObject("Light");
-            var light = go.AddComponent<Light>();
+            var light = new GameObject("Light").AddComponent<Light>();
 
             light.intensity = 0.5f;
             light.type = LightType.Directional;
             light.transform.position = new Vector3(0, 0, -1);
             light.transform.rotation = Quaternion.Euler(30, 30, 0);
-        }
 
-        public void InitializationCamera(Camera camera)
-        {
             camera.backgroundColor = GlobalConfiguration.BackgroundColor;
             camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
             camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
