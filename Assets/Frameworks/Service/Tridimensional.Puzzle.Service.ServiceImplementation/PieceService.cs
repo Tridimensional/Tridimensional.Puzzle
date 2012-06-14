@@ -28,7 +28,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #endregion
 
-        public PieceContract[,] GeneratePiece(SliceContract sliceContract)
+        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract)
+        {
+            return GeneratePieceContracts(sliceContract, null);
+        }
+
+        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action pieceCompleted)
         {
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
@@ -71,6 +76,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     backseatMesh.RecalculateNormals();
 
                     result[i, j] = new PieceContract { MappingMesh = mappingMesh, BackseatMesh = backseatMesh, Position = center - range / 2 };
+
+                    if (pieceCompleted != null) { pieceCompleted(); }
                 }
             }
 

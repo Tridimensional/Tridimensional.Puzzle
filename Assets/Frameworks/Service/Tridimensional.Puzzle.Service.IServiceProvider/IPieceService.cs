@@ -1,9 +1,11 @@
-﻿using Tridimensional.Puzzle.Service.Contract;
+﻿using System;
+using Tridimensional.Puzzle.Service.Contract;
 
 namespace Tridimensional.Puzzle.Service.IServiceProvider
 {
 	public interface IPieceService
 	{
-        PieceContract[,] GeneratePiece(SliceContract sliceContract);
+        PieceContract[,] GeneratePieceContracts(SliceContract sliceContract);
+        PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action pieceCompleted);
     }
 }

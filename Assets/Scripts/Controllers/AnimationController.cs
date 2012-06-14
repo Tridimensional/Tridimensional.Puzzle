@@ -3,15 +3,16 @@ using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
+using System.Threading;
 
 public class AnimationController : MonoBehaviour
 {
-    IModelService _modelService;
+    IPuzzleService _puzzleService;
     ISceneService _sceneService;
 
     void Awake()
     {
-        _modelService = ModelService.Instance;
+        _puzzleService = PuzzleService.Instance;
         _sceneService = SceneService.Instance;
 
         _sceneService.Initialize(gameObject.camera);
@@ -23,10 +24,10 @@ public class AnimationController : MonoBehaviour
     {
         var backdropImage = Resources.Load("Image/LevelBackground/0") as Texture2D;
 
-        var layoutContract = _modelService.GetProperLayout(Screen.width, Screen.height, 100);
-        var sliceContract = _modelService.GetSlice(backdropImage, layoutContract, SlicePattern.Default);
-        var pieceContracts = _modelService.GeneratePieceContracts(sliceContract);
-        var backdropNormalMap = _modelService.GenerateNormalMap(sliceContract);
+        var layoutContract = _puzzleService.GetProperLayout(Screen.width, Screen.height, 100);
+        var sliceContract = _puzzleService.GetSlice(backdropImage, layoutContract, SlicePattern.Default);
+        var pieceContracts = _puzzleService.GeneratePieceContracts(sliceContract);
+        var backdropNormalMap = _puzzleService.GenerateNormalMap(sliceContract);
 
         var visionWidth = GlobalConfiguration.PictureHeightInMeter * Screen.width / Screen.height;
         var pieceWidth = visionWidth / layoutContract.Columns;
@@ -73,10 +74,10 @@ public class AnimationController : MonoBehaviour
             if (!openingAnimation.Finished) { return; }
         }
 
-        Application.LoadLevel(LevelName.Crossing.ToString());
+        //Application.LoadLevel(LevelName.Crossing.ToString());
     }
 
-    private GameObject GeneratePiece(string name, Vector3  position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
+    GameObject GeneratePiece(string name, Vector3  position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
     {
         var go = new GameObject(name);
         go.AddComponent<MeshFilter>().mesh = backseatMesh;
@@ -95,7 +96,7 @@ public class AnimationController : MonoBehaviour
         return go;
     }
 
-    private string GeneratePieceName(int row, int column)
+    string GeneratePieceName(int row, int column)
     {
         return string.Format("Piece <{0:000},{1:000}>", row, column);
     }

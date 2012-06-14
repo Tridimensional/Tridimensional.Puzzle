@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
-    public class ModelService : IModelService
+    public class PuzzleService : IPuzzleService
     {
         IPieceService _pieceService;
         IGraphicsService _graphicsService;
@@ -15,15 +15,15 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #region Instance
 
-        static IModelService _instance;
+        static IPuzzleService _instance;
 
-        public static IModelService Instance
+        public static IPuzzleService Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new ModelService();
+                    _instance = new PuzzleService();
                 }
                 return _instance;
             }
@@ -31,7 +31,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #endregion
 
-        public ModelService()
+        public PuzzleService()
         {
             _pieceService = PieceService.Instance;
             _graphicsService = GraphicsService.Instance;
@@ -74,39 +74,19 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return sliceStrategy.GetSlice(image, layoutContract);
         }
 
-        public GameObject GeneratePiece(string name, Vector3 position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
-        {
-            var go = new GameObject(name);
-            go.AddComponent<MeshFilter>().mesh = backseatMesh;
-            go.AddComponent<MeshRenderer>().material.color = color;
-            go.transform.position = position;
-
-            var mapping = new GameObject("Mapping");
-            mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
-            mapping.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
-            mapping.transform.renderer.material.SetTexture("_MainTex", mainTexture);
-            mapping.transform.renderer.material.SetTexture("_BumpMap", normalMap);
-
-            mapping.transform.parent = go.transform;
-            mapping.transform.localPosition = new Vector3(0, 0, 0);
-
-            return go;
-        }
-
-        public string GeneratePieceName(int row, int column)
-        {
-            return string.Format("Piece <{0:000},{1:000}>", row, column);
-        }
-
         public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract)
         {
-            return _pieceService.GeneratePiece(sliceContract);
+            return _pieceService.GeneratePieceContracts(sliceContract);
+        }
+
+        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action pieceCompleted)
+        {
+            return _pieceService.GeneratePieceContracts(sliceContract, pieceCompleted);
         }
 
         public Texture2D GenerateNormalMap(SliceContract sliceContract)
         {
-            var heightMap = _graphicsService.GenerateHeightMap(sliceContract);
-            return _graphicsService.GenerateNormalMap(heightMap, 0.5f);
+            return _graphicsService.GenerateNormalMap(sliceContract, 1);
         }
     }
 }

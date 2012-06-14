@@ -5,16 +5,16 @@ using UnityEngine;
 
 public class WelcomeController : MonoBehaviour
 {
-    float _duration = 3f;
-    Texture2D _logoTexture;
-    Rect _logoTextureRect;
     Color _backgroundColor;
+    float _duration = 3f;
+    Rect _logoTextureRect;
+    Texture2D _logoTexture;
 
     void Awake()
     {
+        _backgroundColor = GlobalConfiguration.BackgroundColor;
         _logoTexture = Resources.Load("Image/Logo/256") as Texture2D;
         _logoTextureRect = GetCompatibleLogoRect();
-        _backgroundColor = GlobalConfiguration.BackgroundColor;
     }
 
     void Start()

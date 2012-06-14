@@ -27,6 +27,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #endregion
 
+        public Texture2D GenerateNormalMap(SliceContract sliceContract, float strength)
+        {
+            var heightMap = GenerateHeightMap(sliceContract);
+            return GenerateNormalMap(heightMap, strength);
+        }
+
         public Texture2D GenerateNormalMap(Texture2D heightMap, float strength)
         {
             var dx = 0f; var dy = 0f;
