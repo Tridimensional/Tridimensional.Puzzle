@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Tridimensional.Puzzle.Core.Enumeration
 {
-	public enum CustomTags
-	{
-        BackdropPiece
-	}
+    public enum CustomTags
+    {
+        Piece
+    }
 }

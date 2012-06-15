@@ -1,4 +1,5 @@
 using System;
+using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
@@ -72,21 +73,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         {
             var sliceStrategy = _sliceStrategyFactory.Create(slicePattern);
             return sliceStrategy.GetSlice(image, layoutContract);
-        }
-
-        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract)
-        {
-            return _pieceService.GeneratePieceContracts(sliceContract);
-        }
-
-        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action pieceCompleted)
-        {
-            return _pieceService.GeneratePieceContracts(sliceContract, pieceCompleted);
-        }
-
-        public Texture2D GenerateNormalMap(SliceContract sliceContract)
-        {
-            return _graphicsService.GenerateNormalMap(sliceContract, 1);
         }
     }
 }

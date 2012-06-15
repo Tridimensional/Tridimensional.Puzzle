@@ -1,6 +1,5 @@
 ﻿using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.Core.Enumeration;
-using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
@@ -8,16 +7,18 @@ using UnityEngine;
 public class CrossingController : MonoBehaviour
 {
     ICrossingService _crossingService;
+    IPieceService _pieceService;
     IPuzzleService _puzzleService;
     ISceneService _sceneService;
 
     void Awake()
     {
         _crossingService = CrossingService.Instance;
+        _pieceService = PieceService.Instance;
         _puzzleService = PuzzleService.Instance;
         _sceneService = SceneService.Instance;
 
-        _sceneService.Initialize(gameObject.camera);
+        _sceneService.Initialize(camera);
 
         InitializeEnvironment();
     }
@@ -40,6 +41,7 @@ public class CrossingController : MonoBehaviour
 
     void Update()
     {
+        _pieceService.DestoryAllPieces();
         Application.LoadLevel(LevelName.Loading.ToString());
     }
 }

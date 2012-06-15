@@ -11,7 +11,7 @@
                 case Difficulty.Middle:
                     return 50;
                 case Difficulty.Hard:
-                    return 100;
+                    return 5000;
                 default:
                     return 200;
             }

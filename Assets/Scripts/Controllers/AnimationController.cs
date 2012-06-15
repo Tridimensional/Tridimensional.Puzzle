@@ -1,21 +1,25 @@
 ﻿using Tridimensional.Puzzle.Core;
+using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
-using System.Threading;
 
 public class AnimationController : MonoBehaviour
 {
+    IGraphicsService _graphicsService;
+    IPieceService _pieceService;
     IPuzzleService _puzzleService;
     ISceneService _sceneService;
 
     void Awake()
     {
+        _graphicsService = GraphicsService.Instance;
+        _pieceService = PieceService.Instance;
         _puzzleService = PuzzleService.Instance;
         _sceneService = SceneService.Instance;
 
-        _sceneService.Initialize(gameObject.camera);
+        _sceneService.Initialize(camera);
 
         InitializeEnvironment();
     }
@@ -26,8 +30,8 @@ public class AnimationController : MonoBehaviour
 
         var layoutContract = _puzzleService.GetProperLayout(Screen.width, Screen.height, 100);
         var sliceContract = _puzzleService.GetSlice(backdropImage, layoutContract, SlicePattern.Default);
-        var pieceContracts = _puzzleService.GeneratePieceContracts(sliceContract);
-        var backdropNormalMap = _puzzleService.GenerateNormalMap(sliceContract);
+        var pieceContracts = _pieceService.GeneratePieceContracts(sliceContract);
+        var backdropNormalMap = _graphicsService.GenerateNormalMap(sliceContract).ToTexture2D();
 
         var visionWidth = GlobalConfiguration.PictureHeightInMeter * Screen.width / Screen.height;
         var pieceWidth = visionWidth / layoutContract.Columns;
@@ -42,12 +46,14 @@ public class AnimationController : MonoBehaviour
             for (var j = 0; j < layoutContract.Columns; j++)
             {
                 var pieceContract = pieceContracts[i, j];
-                var pieceName = GeneratePieceName(i, j);
+                var pieceName = _pieceService.GeneratePieceName(i, j);
                 var distance = circleDistance + 4f * (visionWidth - 2 * (pieceContract.Position.x + pieceWidth * (UnityEngine.Random.value - 1)));
                 var currentPosition = pieceContract.Position + new Vector3(distance - circleDistance, 0, 0);
 
-                var piece = GeneratePiece(pieceName, currentPosition, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), backdropImage, backdropNormalMap);
-                piece.tag = CustomTags.BackdropPiece.ToString();
+                var mappingMesh = _pieceService.ConvertToMappingMesh(pieceContract.MappingMesh);
+                var backseatMesh = _pieceService.ConvertToBackseatMesh(pieceContract.BackseatMesh);
+
+                var piece = _pieceService.GeneratePiece(pieceName, currentPosition, mappingMesh, backseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), backdropImage, backdropNormalMap);
                 GameObject.DontDestroyOnLoad(piece);
 
                 var openingAnimation = piece.AddComponent<OpeningAnimation>();
@@ -66,7 +72,7 @@ public class AnimationController : MonoBehaviour
 
     void Update()
     {
-        var pieces = GameObject.FindGameObjectsWithTag(CustomTags.BackdropPiece.ToString());
+        var pieces = GameObject.FindGameObjectsWithTag(CustomTags.Piece.ToString());
 
         foreach (var piece in pieces)
         {
@@ -74,30 +80,6 @@ public class AnimationController : MonoBehaviour
             if (!openingAnimation.Finished) { return; }
         }
 
-        //Application.LoadLevel(LevelName.Crossing.ToString());
-    }
-
-    GameObject GeneratePiece(string name, Vector3  position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
-    {
-        var go = new GameObject(name);
-        go.AddComponent<MeshFilter>().mesh = backseatMesh;
-        go.AddComponent<MeshRenderer>().material.color = color;
-        go.transform.position = position;
-
-        var mapping = new GameObject("Mapping");
-        mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
-        mapping.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
-        mapping.transform.renderer.material.SetTexture("_MainTex", mainTexture);
-        mapping.transform.renderer.material.SetTexture("_BumpMap", normalMap);
-
-        mapping.transform.parent = go.transform;
-        mapping.transform.localPosition = new Vector3(0, 0, 0);
-
-        return go;
-    }
-
-    string GeneratePieceName(int row, int column)
-    {
-        return string.Format("Piece <{0:000},{1:000}>", row, column);
+        Application.LoadLevel(LevelName.Crossing.ToString());
     }
 }
