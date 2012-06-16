@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LoadingAnimation : MonoBehaviour
 {
     public float Progress;
 
-    Rect _rect;
+    int width;
+    int height;
     Texture2D _background;
     Texture2D _foregroundLeft;
     Texture2D _foregroundMiddle;
@@ -18,17 +15,25 @@ public class LoadingAnimation : MonoBehaviour
 
     void Awake()
     {
-        _background = Resources.Load("Image/Logo/256") as Texture2D;
-        _foregroundLeft = Resources.Load("Image/Loading/ForegroundLeft") as Texture2D;
-        _foregroundMiddle = Resources.Load("Image/Loading/ForegroundMiddle") as Texture2D;
-        _foregroundRight = Resources.Load("Image/Loading/ForegroundRight") as Texture2D;
+        _background = Resources.Load("Image/LevelBackground/4") as Texture2D;
+        _foregroundLeft = Resources.Load("Image/LevelBackground/1") as Texture2D;
+        _foregroundMiddle = Resources.Load("Image/LevelBackground/1") as Texture2D;
+        _foregroundRight = Resources.Load("Image/LevelBackground/1") as Texture2D;
 
-        _rect = new Rect(100, 100, 100, 100);
+        width = Screen.width / 2;
+        height = width / 30;
     }
 
     void OnGUI()
     {
-        GUI.DrawTexture(_rect, _background);
-        GUI.DrawTexture(new Rect(100, 100, 100 * Progress, 100), _background);
+        var backgroundRect = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
+        var foregroundLeftRect = new Rect(backgroundRect.xMin, backgroundRect.yMin, height / 2, height);
+        var foregroundMiddleRect = new Rect(foregroundLeftRect.xMax, backgroundRect.yMin, Progress * (width - height), height);
+        var foregroundRightRect = new Rect(foregroundMiddleRect.xMax, backgroundRect.yMin, height / 2, height);
+
+        GUI.DrawTexture(backgroundRect, _background);
+        GUI.DrawTexture(foregroundLeftRect, _foregroundLeft);
+        GUI.DrawTexture(foregroundMiddleRect, _foregroundMiddle);
+        GUI.DrawTexture(foregroundRightRect, _foregroundRight);
     }
 }

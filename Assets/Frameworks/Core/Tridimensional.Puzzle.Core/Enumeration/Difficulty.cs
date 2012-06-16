@@ -7,4 +7,3 @@ namespace Tridimensional.Puzzle.Core.Enumeration
 		Hard
 	}
 }
-

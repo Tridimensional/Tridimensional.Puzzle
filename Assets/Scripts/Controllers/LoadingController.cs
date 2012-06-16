@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Core.Enumeration;
@@ -9,19 +11,19 @@ using UnityEngine;
 
 public class LoadingController : MonoBehaviour
 {
-    float _progress;
-    GameContract _gameContract;
-    GameObject _loading;
+    float _progress = 0;
+    IGameService _gameService;
     IGraphicsService _graphicsService;
     ILoadingService _loadingService;
-    Image _normalMapImage;
     IPieceService _pieceService;
     IPuzzleService _puzzleService;
     ISceneService _sceneService;
-    PieceContract[,] _pieceContracts;
+    GameObject[] _pieces;
+    LoadingAnimation _loadingAnimation;
 
     void Awake()
     {
+        _gameService = GameService.Instance;
         _graphicsService = GraphicsService.Instance;
         _loadingService = LoadingService.Instance;
         _pieceService = PieceService.Instance;
@@ -35,53 +37,23 @@ public class LoadingController : MonoBehaviour
 
     void InitializeEnvironment()
     {
-        _gameContract = GameCommander.GameInstance;
-        _loading = GenerateLoading();
+        _loadingAnimation = gameObject.AddComponent<LoadingAnimation>();
 
-        var pieceProgress = 0f;
-        var normalMapProgress = 0f;
-        var sliceContract = _gameContract.SliceContract;
-
-        new Thread(() => { _pieceContracts = _pieceService.GeneratePieceContracts(sliceContract, refer => { OnPercentageCompleted(pieceProgress = refer, normalMapProgress); }); }).Start();
-        new Thread(() => { _normalMapImage = _graphicsService.GenerateNormalMap(sliceContract, 1, refer => { OnPercentageCompleted(pieceProgress, normalMapProgress = refer); }); }).Start();
+        StartCoroutine(AsyncLoadObjects());
     }
 
-    void OnPercentageCompleted(float pieceProgress, float normalMapProgress)
+    IEnumerator AsyncLoadObjects()
     {
-        _progress = 0.3f * pieceProgress + 0.7f * normalMapProgress;
-    }
+        yield return 0;
 
-    void Update()
-    {
-        var loadingAnimation = _loading.GetComponent<LoadingAnimation>();
-        loadingAnimation.Progress = _progress;
+        var mainTexture = _gameService.GetMainTexture();
+        var pieceContracts = _gameService.GetPieceContracts();
+        var normalMap = _gameService.GetNormalMap();
 
-        if (_pieceContracts != null && _normalMapImage != null)
-        {
-            var pieces = GameObject.FindGameObjectsWithTag(CustomTags.Piece.ToString());
-
-            if (pieces == null || pieces.Length == 0)
-            {
-                GeneratePiece(_pieceContracts, _gameContract.Image, _normalMapImage.ToTexture2D());
-            }
-            else if (IsPiecesStopMoving(pieces))
-            {
-                Application.LoadLevel(LevelName.Battle.ToString());
-            }
-        }
-
-        if (_progress < 1) { Debug.Log(_progress); }
-    }
-
-    private bool IsPiecesStopMoving(GameObject[] gameObjects)
-    {
-        return true;
-    }
-
-    void GeneratePiece(PieceContract[,] pieceContracts, Texture2D mainTexture, Texture2D normalMap)
-    {
         var rows = pieceContracts.GetLength(0);
         var columns = pieceContracts.GetLength(1);
+        var pieceCount = (float)rows * columns;
+        var pieces = new List<GameObject>();
 
         for (var i = 0; i < rows; i++)
         {
@@ -89,21 +61,38 @@ public class LoadingController : MonoBehaviour
             {
                 var pieceContract = pieceContracts[i, j];
                 var name = _pieceService.GeneratePieceName(i, j);
-                var mappingMesh = _pieceService.ConvertToMappingMesh(pieceContract.MappingMesh);
-                var backseatMesh = _pieceService.ConvertToBackseatMesh(pieceContract.BackseatMesh);
 
-                var piece = _pieceService.GeneratePiece(name, pieceContract.Position, mappingMesh, backseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
+                var piece = _pieceService.GeneratePiece(name, Vector3.zero, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
+
+                var boxCollider = piece.AddComponent<BoxCollider>();
+
+                var rigidbody = piece.AddComponent<Rigidbody>();
+
                 GameObject.DontDestroyOnLoad(piece);
+
+                pieces.Add(piece);
+
+                _progress = (i * columns + j + 1) / pieceCount;
+
+                yield return 1;
             }
+        }
+
+        _pieces = pieces.ToArray();
+    }
+
+    void Update()
+    {
+        _loadingAnimation.Progress = _progress;
+
+        if (_loadingAnimation.Finished && IsPiecesStopedMoving())
+        {
+            Application.LoadLevel(LevelName.Battle.ToString());
         }
     }
 
-    GameObject GenerateLoading()
+    bool IsPiecesStopedMoving()
     {
-        var go = new GameObject("Loading");
-
-        var loading = go.AddComponent<LoadingAnimation>();
-
-        return go;
+        return true;
     }
 }

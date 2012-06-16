@@ -34,11 +34,11 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return GeneratePieceContracts(sliceContract, null);
         }
 
-        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action<float> percentageCompleted)
+        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action<float> percentComplet)
         {
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
-            var pieceCount = rows * columns;
+            var pieceCount = (float)rows * columns;
 
             var sliceStart = sliceContract.Vertexes[0, 0];
             var sliceValidRange = sliceContract.Vertexes[rows, columns] - sliceStart;
@@ -61,26 +61,21 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThicknessInMeter / 2));
                     var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThicknessInMeter));
 
-                    var mappingMesh = new MeshContract
-                    {
-                        Vertices = topVertexes,
-                        Triangles = triangulator.Triangulate(),
-                        Uv = GetUVs(vertexes, range)
-                    };
+                    var mappingMesh = new Mesh();
+                    mappingMesh.vertices = topVertexes;
+                    mappingMesh.triangles = triangulator.Triangulate();
+                    mappingMesh.uv = GetUVs(vertexes, range);
+                    mappingMesh.RecalculateNormals();
+                    mappingMesh.ReCalculateTangents();
 
-                    var bottomTriangles = Reverse<int>(mappingMesh.Triangles);
-                    var sideVertices = GetSideVertices(topVertexes, bottomVertexes);
-                    var sideTriangles = GetSideTriangles(vertexes.Length);
-
-                    var backseatMesh = new MeshContract
-                    {
-                        Vertices = Merge<Vector3>(bottomVertexes, sideVertices),
-                        Triangles = Merge<int>(bottomTriangles, sideTriangles)
-                    };
+                    var backseatMesh = new Mesh();
+                    backseatMesh.vertices = Merge<Vector3>(bottomVertexes, GetSideVertices(topVertexes, bottomVertexes));
+                    backseatMesh.triangles = Merge<int>(Reverse<int>(mappingMesh.triangles), GetSideTriangles(vertexes.Length));
+                    backseatMesh.RecalculateNormals();
 
                     result[i, j] = new PieceContract { MappingMesh = mappingMesh, BackseatMesh = backseatMesh, Position = center - range / 2 };
 
-                    if (percentageCompleted != null) { percentageCompleted((i + 1) * (j + 1) / (float)pieceCount); }
+                    if (percentComplet != null) { percentComplet((i * columns + j + 1) / pieceCount); }
                 }
             }
 
@@ -229,28 +224,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             {
                 GameObject.Destroy(piece);
             }
-        }
-
-        public Mesh ConvertToMappingMesh(MeshContract meshContract)
-        {
-            var mesh = new Mesh();
-            mesh.vertices = meshContract.Vertices;
-            mesh.triangles = meshContract.Triangles;
-            mesh.uv = meshContract.Uv;
-            mesh.RecalculateNormals();
-            //mesh.ReCalculateTangents();
-
-            return mesh;
-        }
-
-        public Mesh ConvertToBackseatMesh(MeshContract meshContract)
-        {
-            var mesh = new Mesh();
-            mesh.vertices = meshContract.Vertices;
-            mesh.triangles = meshContract.Triangles;
-            mesh.RecalculateNormals();
-
-            return mesh;
         }
     }
 }

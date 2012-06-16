@@ -31,7 +31,7 @@ public class AnimationController : MonoBehaviour
         var layoutContract = _puzzleService.GetProperLayout(Screen.width, Screen.height, 100);
         var sliceContract = _puzzleService.GetSlice(backdropImage, layoutContract, SlicePattern.Default);
         var pieceContracts = _pieceService.GeneratePieceContracts(sliceContract);
-        var backdropNormalMap = _graphicsService.GenerateNormalMap(sliceContract).ToTexture2D();
+        var backdropNormalMap = _graphicsService.GenerateNormalMap(sliceContract);
 
         var visionWidth = GlobalConfiguration.PictureHeightInMeter * Screen.width / Screen.height;
         var pieceWidth = visionWidth / layoutContract.Columns;
@@ -50,10 +50,7 @@ public class AnimationController : MonoBehaviour
                 var distance = circleDistance + 4f * (visionWidth - 2 * (pieceContract.Position.x + pieceWidth * (UnityEngine.Random.value - 1)));
                 var currentPosition = pieceContract.Position + new Vector3(distance - circleDistance, 0, 0);
 
-                var mappingMesh = _pieceService.ConvertToMappingMesh(pieceContract.MappingMesh);
-                var backseatMesh = _pieceService.ConvertToBackseatMesh(pieceContract.BackseatMesh);
-
-                var piece = _pieceService.GeneratePiece(pieceName, currentPosition, mappingMesh, backseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), backdropImage, backdropNormalMap);
+                var piece = _pieceService.GeneratePiece(pieceName, currentPosition, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), backdropImage, backdropNormalMap);
                 GameObject.DontDestroyOnLoad(piece);
 
                 var openingAnimation = piece.AddComponent<OpeningAnimation>();

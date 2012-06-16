@@ -27,33 +27,31 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         #endregion
 
-        public Image GenerateNormalMap(SliceContract sliceContract)
+        public Texture2D GenerateNormalMap(SliceContract sliceContract)
         {
             return GenerateNormalMap(sliceContract, null);
         }
 
-        public Image GenerateNormalMap(SliceContract sliceContract, Action<float> percentageCompleted)
+        public Texture2D GenerateNormalMap(SliceContract sliceContract, Action<float> percentComplet)
         {
-            return GenerateNormalMap(sliceContract, 1, percentageCompleted);
+            return GenerateNormalMap(sliceContract, 1, percentComplet);
         }
 
-        public Image GenerateNormalMap(SliceContract sliceContract, float strength)
+        public Texture2D GenerateNormalMap(SliceContract sliceContract, float strength)
         {
             return GenerateNormalMap(sliceContract, strength, null);
         }
 
-        public Image GenerateNormalMap(SliceContract sliceContract, float strength, Action<float> percentageCompleted)
+        public Texture2D GenerateNormalMap(SliceContract sliceContract, float strength, Action<float> percentComplet)
         {
-            var heightMap = null as Image;
-            if (percentageCompleted == null) { heightMap = GenerateHeightMap(sliceContract); }
-            else { heightMap = GenerateHeightMap(sliceContract, refer => { percentageCompleted(0.9f * refer); }); }
+            var heightMap = GenerateHeightMap(sliceContract, percentComplet);
 
             var dx = 0f; var dy = 0f;
             var left = 0f; var right = 0f; var up = 0f; var down = 0f;
 
             strength = Mathf.Clamp(strength, 0f, 10f);
 
-            var normalMap = new Image(heightMap.width, heightMap.height);
+            var normalMap = new Texture2D(heightMap.width, heightMap.height);
 
             for (var i = 0; i < normalMap.width; i++)
             {
@@ -71,19 +69,19 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 }
             }
 
-            if (percentageCompleted != null) { percentageCompleted(1); }
+            normalMap.Apply();
 
             return normalMap;
         }
 
-        public Image GenerateHeightMap(SliceContract sliceContract)
+        public Texture2D GenerateHeightMap(SliceContract sliceContract)
         {
             return GenerateHeightMap(sliceContract, null);
         }
 
-        public Image GenerateHeightMap(SliceContract sliceContract, Action<float> percentageCompleted)
+        public Texture2D GenerateHeightMap(SliceContract sliceContract, Action<float> percentComplet)
         {
-            var heightMap = new Image(sliceContract.Width, sliceContract.Height);
+            var heightMap = new Texture2D(sliceContract.Width, sliceContract.Height);
 
             for (var i = 0; i < heightMap.width; i++)
             {
@@ -97,8 +95,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
             var lines = null as Point[];
 
-            var totalSteps = rows * columns + rows + columns;
-            var completedSteps = 0;
+            var totalSteps = (float)rows * columns + rows + columns;
+            var completSteps = 0;
 
             for (var i = 0; i < rows - 1; i++)
             {
@@ -114,7 +112,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     DrawLine(heightMap, lines);
                     DrawLine(heightMap, lines[lines.Length - 1], sliceContract.Vertexes[i + 1, j + 1]);
 
-                    if (percentageCompleted != null) { percentageCompleted(1f * (++completedSteps) / totalSteps); }
+                    if (percentComplet != null) { percentComplet((++completSteps) / totalSteps); }
                 }
             }
 
@@ -134,12 +132,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 DrawLine(heightMap, lines[lines.Length - 1], sliceContract.Vertexes[rows, j + 1]);
             }
 
-            if (percentageCompleted != null) { percentageCompleted(1); }
+            if (percentComplet != null) { percentComplet(1); }
+
+            heightMap.Apply();
 
             return heightMap;
         }
 
-        private void DrawLine(Image source, Point[] points)
+        private void DrawLine(Texture2D source, Point[] points)
         {
             for (var i = 0; i < points.Length - 1; i++)
             {
@@ -147,7 +147,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             }
         }
 
-        private void DrawLine(Image source, Point from, Point to)
+        private void DrawLine(Texture2D source, Point from, Point to)
         {
             DrawSoften(source, from.X, from.Y);
             DrawSoften(source, to.X, to.Y);
@@ -182,7 +182,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             }
         }
 
-        private void DrawSoften(Image source, int x, int y)
+        private void DrawSoften(Texture2D source, int x, int y)
         {
             var width = GlobalConfiguration.SoftenWidthInPixel;
 
@@ -195,7 +195,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             }
         }
 
-        private void DrawSoften(Image source, int x, float y)
+        private void DrawSoften(Texture2D source, int x, float y)
         {
             var width = GlobalConfiguration.SoftenWidthInPixel;
             var round = Mathf.RoundToInt(y);
@@ -206,7 +206,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             }
         }
 
-        private void DrawSoften(Image source, float x, int y)
+        private void DrawSoften(Texture2D source, float x, int y)
         {
             var width = GlobalConfiguration.SoftenWidthInPixel;
             var round = Mathf.RoundToInt(x);
@@ -217,7 +217,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             }
         }
 
-        private void SetPixel(Image source, int x, int y, Color color)
+        private void SetPixel(Texture2D source, int x, int y, Color color)
         {
             if (x < 0 || x > source.width || y < 0 || y > source.height) { return; }
             if (color.r > source.GetPixel(x, y).r) { return; }

@@ -1,5 +1,4 @@
-﻿using Tridimensional.Puzzle.Core;
-using Tridimensional.Puzzle.Core.Enumeration;
+﻿using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
@@ -7,6 +6,7 @@ using UnityEngine;
 public class CrossingController : MonoBehaviour
 {
     ICrossingService _crossingService;
+    IGameService _gameService;
     IPieceService _pieceService;
     IPuzzleService _puzzleService;
     ISceneService _sceneService;
@@ -14,6 +14,7 @@ public class CrossingController : MonoBehaviour
     void Awake()
     {
         _crossingService = CrossingService.Instance;
+        _gameService = GameService.Instance;
         _pieceService = PieceService.Instance;
         _puzzleService = PuzzleService.Instance;
         _sceneService = SceneService.Instance;
@@ -25,18 +26,15 @@ public class CrossingController : MonoBehaviour
 
     void InitializeEnvironment()
     {
-        var gameContract = GameCommander.OpenNew();
-        var difficulty = Difficulty.Hard;
-        var slicePattern = SlicePattern.Random;
-        var image = Resources.Load("Image/LevelBackground/1") as Texture2D;
-        var layoutContract = _puzzleService.GetProperLayout(image, difficulty);
+        var gameContract = _gameService.OpenNew();
 
-        gameContract.ImageSource = "local";
+        gameContract.ImageSource = ImageSource.Local;
         gameContract.OnlineType = OnlineType.Local;
-        gameContract.SlicePattern = slicePattern;
-        gameContract.Difficulty = difficulty;
-        gameContract.Image = image;
-        gameContract.SliceContract = _puzzleService.GetSlice(image, layoutContract, slicePattern);
+        gameContract.SlicePattern = SlicePattern.Default;
+        gameContract.Difficulty = Difficulty.Middle;
+        gameContract.ImageAddress = "Image/LevelBackground/4";
+
+        _gameService.Apply();
     }
 
     void Update()

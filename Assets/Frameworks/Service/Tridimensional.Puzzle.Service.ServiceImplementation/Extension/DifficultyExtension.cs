@@ -1,4 +1,6 @@
-﻿namespace Tridimensional.Puzzle.Core.Enumeration
+﻿using System;
+
+namespace Tridimensional.Puzzle.Core.Enumeration
 {
 	public static class DifficultyExtension
 	{
@@ -7,13 +9,13 @@
             switch (difficulty)
             {
                 case Difficulty.Easy:
-                    return 20;
-                case Difficulty.Middle:
                     return 50;
+                case Difficulty.Middle:
+                    return 80;
                 case Difficulty.Hard:
-                    return 5000;
+                    return 150;
                 default:
-                    return 200;
+                    throw new NotImplementedException();
             }
         }
 	}
