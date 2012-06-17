@@ -63,13 +63,10 @@ public class LoadingController : MonoBehaviour
                 var name = _pieceService.GeneratePieceName(i, j);
 
                 var piece = _pieceService.GeneratePiece(name, Vector3.zero, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
-
                 var boxCollider = piece.AddComponent<BoxCollider>();
-
                 var rigidbody = piece.AddComponent<Rigidbody>();
 
                 GameObject.DontDestroyOnLoad(piece);
-
                 pieces.Add(piece);
 
                 _progress = (i * columns + j + 1) / pieceCount;
