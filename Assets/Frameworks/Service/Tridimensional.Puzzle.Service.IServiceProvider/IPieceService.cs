@@ -9,6 +9,7 @@ namespace Tridimensional.Puzzle.Service.IServiceProvider
         PieceContract[,] GeneratePieceContracts(SliceContract sliceContract);
         PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action<float> percentComplet);
         GameObject GeneratePiece(string name, Vector3 position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap);
+        GameObject GeneratePiece(string name, Vector3 position, Quaternion rotation, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap);
         string GeneratePieceName(int row, int column);
         void DestoryAllPieces();
     }

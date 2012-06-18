@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Tridimensional.Puzzle.Core;
-using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Core.Enumeration;
-using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
 using UnityEngine;
@@ -55,6 +52,7 @@ public class LoadingController : MonoBehaviour
         var rows = pieceContracts.GetLength(0);
         var columns = pieceContracts.GetLength(1);
         var pieceCount = (float)rows * columns;
+        var surfaceThickness = GlobalConfiguration.SurfaceThicknessInMeter;
         var pieces = new List<GameObject>();
 
         for (var i = 0; i < rows; i++)
@@ -64,7 +62,7 @@ public class LoadingController : MonoBehaviour
                 var pieceContract = pieceContracts[i, j];
                 var name = _pieceService.GeneratePieceName(i, j);
 
-                var piece = _pieceService.GeneratePiece(name, Vector3.zero, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
+                var piece = _pieceService.GeneratePiece(name, GetRandomPosition(0.2f), GetRandomRotation(), pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
 
                 GameObject.DontDestroyOnLoad(piece);
                 pieces.Add(piece);
@@ -77,8 +75,11 @@ public class LoadingController : MonoBehaviour
 
         foreach (var piece in pieces)
         {
-            piece.AddComponent<BoxCollider>();
-            piece.AddComponent<Rigidbody>();
+            var boxCollider = piece.AddComponent<BoxCollider>();
+            boxCollider.size += new Vector3(surfaceThickness, surfaceThickness, surfaceThickness);
+
+            var rigidbody = piece.AddComponent<Rigidbody>();
+            rigidbody.mass = 1f;
         }
 
         _pieces = pieces.ToArray();
@@ -98,6 +99,16 @@ public class LoadingController : MonoBehaviour
     {
         GUI.depth = 1;
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), _backgroundImage);
+    }
+
+    Vector3 GetRandomPosition(float range)
+    {
+        return new Vector3(Random.Range(-range, range), Random.Range(-range, range) + GlobalConfiguration.DeskThinknessInMeter, Random.Range(-range, range));
+    }
+
+    Quaternion GetRandomRotation()
+    {
+        return Quaternion.Euler(new Vector3(Random.value > 0.5 ? 270 : 90, Random.Range(0f, 360f), 0));
     }
 
     bool IsPiecesStopedMoving()

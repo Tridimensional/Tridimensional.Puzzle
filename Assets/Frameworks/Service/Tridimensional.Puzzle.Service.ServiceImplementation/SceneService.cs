@@ -37,9 +37,17 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             light.transform.position = new Vector3(0, 0, -1);
             light.transform.rotation = Quaternion.Euler(30, 30, 0);
 
-            camera.backgroundColor = GlobalConfiguration.BackgroundColor;
-            camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
-            camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
+            if (levelName == LevelName.Battle)
+            {
+                camera.transform.position = GlobalConfiguration.DeskPosition + new Vector3(0.4f, 0.8f, 0.4f);
+                camera.transform.LookAt(GlobalConfiguration.DeskPosition + new Vector3(0, GlobalConfiguration.DeskThinknessInMeter / 2, 0));
+            }
+            else
+            {
+                camera.backgroundColor = GlobalConfiguration.BackgroundColor;
+                camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
+                camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
+            }
 
             if (levelName == LevelName.Loading)
             {
@@ -51,11 +59,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = "Desktop";
-            go.transform.position = new Vector3(0, -0.2f, 0);
-            go.transform.localScale = new Vector3(1f, 0.1f, 1f);
-            go.transform.renderer.material.color = new Color32(0xcc, 0xcc, 0xcc, 0xff);
+            go.transform.position = GlobalConfiguration.DeskPosition;
+            go.transform.localScale = new Vector3(10f, GlobalConfiguration.DeskThinknessInMeter, 10f);
+            go.transform.renderer.material.color = new Color32(0xff, 0x00, 0x00, 0xff);
 
             var boxCollider = go.GetComponent<BoxCollider>();
+            boxCollider.size += new Vector3(0, GlobalConfiguration.SurfaceThicknessInMeter * 2, 0);
 
             GameObject.DontDestroyOnLoad(go);
         }

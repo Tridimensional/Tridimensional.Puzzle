@@ -190,13 +190,18 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             return list.ToArray();
         }
 
-
         public GameObject GeneratePiece(string name, Vector3 position, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
+        {
+            return GeneratePiece(name, position, Quaternion.Euler(0, 0, 0), mappingMesh, backseatMesh, color, mainTexture, normalMap);
+        }
+
+        public GameObject GeneratePiece(string name, Vector3 position, Quaternion rotation, Mesh mappingMesh, Mesh backseatMesh, Color color, Texture2D mainTexture, Texture2D normalMap)
         {
             var go = new GameObject(name);
             go.AddComponent<MeshFilter>().mesh = backseatMesh;
             go.AddComponent<MeshRenderer>().material.color = color;
             go.transform.position = position;
+            go.transform.localRotation = rotation;
             go.tag = CustomTags.Piece.ToString();
 
             var mapping = new GameObject("Mapping");
@@ -207,6 +212,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             mapping.transform.parent = go.transform;
             mapping.transform.localPosition = new Vector3(0, 0, 0);
+            mapping.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             return go;
         }
