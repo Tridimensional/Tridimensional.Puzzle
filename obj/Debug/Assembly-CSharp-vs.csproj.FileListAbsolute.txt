@@ -1,0 +1,8 @@
+D:\Project\Unity\Tridimensional.Puzzle\Temp\bin\Debug\Assembly-CSharp.dll
+D:\Project\Unity\Tridimensional.Puzzle\Temp\bin\Debug\Assembly-CSharp.pdb
+D:\Project\Unity\Tridimensional.Puzzle\Temp\bin\Debug\UnityEditor.dll
+D:\Project\Unity\Tridimensional.Puzzle\Temp\bin\Debug\UnityEngine.dll
+D:\Project\Unity\Tridimensional.Puzzle\Temp\bin\Debug\nunit.framework.dll
+D:\Project\Unity\Tridimensional.Puzzle\obj\Debug\ResolveAssemblyReference.cache
+D:\Project\Unity\Tridimensional.Puzzle\obj\Debug\Assembly-CSharp.dll
+D:\Project\Unity\Tridimensional.Puzzle\obj\Debug\Assembly-CSharp.pdb
