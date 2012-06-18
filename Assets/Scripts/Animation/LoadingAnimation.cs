@@ -6,7 +6,9 @@ public class LoadingAnimation : MonoBehaviour
 
     int width;
     int height;
-    Texture2D _background;
+    Texture2D _backgroundLeft;
+    Texture2D _backgroundMiddle;
+    Texture2D _backgroundRight;
     Texture2D _foregroundLeft;
     Texture2D _foregroundMiddle;
     Texture2D _foregroundRight;
@@ -15,25 +17,38 @@ public class LoadingAnimation : MonoBehaviour
 
     void Awake()
     {
-        _background = Resources.Load("Image/LevelBackground/4") as Texture2D;
-        _foregroundLeft = Resources.Load("Image/LevelBackground/1") as Texture2D;
-        _foregroundMiddle = Resources.Load("Image/LevelBackground/1") as Texture2D;
-        _foregroundRight = Resources.Load("Image/LevelBackground/1") as Texture2D;
+        _backgroundLeft = Resources.Load("Image/Loading/BackgroundLeft") as Texture2D;
+        _backgroundMiddle = Resources.Load("Image/Loading/BackgroundMiddle") as Texture2D;
+        _backgroundRight = Resources.Load("Image/Loading/BackgroundRight") as Texture2D;
+        _foregroundLeft = Resources.Load("Image/Loading/ForegroundLeft") as Texture2D;
+        _foregroundMiddle = Resources.Load("Image/Loading/ForegroundMiddle") as Texture2D;
+        _foregroundRight = Resources.Load("Image/Loading/ForegroundRight") as Texture2D;
 
-        width = Screen.width / 2;
-        height = width / 30;
+        width = Screen.width / 3;
+        height = width / 10;
     }
 
     void OnGUI()
     {
-        var backgroundRect = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, width, height);
-        var foregroundLeftRect = new Rect(backgroundRect.xMin, backgroundRect.yMin, height / 2, height);
-        var foregroundMiddleRect = new Rect(foregroundLeftRect.xMax, backgroundRect.yMin, Progress * (width - height), height);
-        var foregroundRightRect = new Rect(foregroundMiddleRect.xMax, backgroundRect.yMin, height / 2, height);
+        GUI.depth = 0;
 
-        GUI.DrawTexture(backgroundRect, _background);
-        GUI.DrawTexture(foregroundLeftRect, _foregroundLeft);
-        GUI.DrawTexture(foregroundMiddleRect, _foregroundMiddle);
-        GUI.DrawTexture(foregroundRightRect, _foregroundRight);
+        var backgroundLeftRect = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, height / 2, height);
+        var backgroundMiddleRect = new Rect(backgroundLeftRect.xMax, backgroundLeftRect.yMin, width - height, height);
+        var backgroundRightRect = new Rect(backgroundMiddleRect.xMax, backgroundLeftRect.yMin, height / 2, height);
+
+        GUI.DrawTexture(backgroundLeftRect, _backgroundLeft);
+        GUI.DrawTexture(backgroundMiddleRect, _backgroundMiddle);
+        GUI.DrawTexture(backgroundRightRect, _backgroundRight);
+
+        if (Progress > 0)
+        {
+            var forgroundLeftRect = backgroundLeftRect;
+            var forgroundMiddleRect = new Rect(forgroundLeftRect.xMax, forgroundLeftRect.yMin, Progress * (width - height), height);
+            var forgroundRightRect = new Rect(forgroundMiddleRect.xMax, forgroundLeftRect.yMin, height / 2, height);
+
+            GUI.DrawTexture(forgroundLeftRect, _foregroundLeft);
+            GUI.DrawTexture(forgroundMiddleRect, _foregroundMiddle);
+            GUI.DrawTexture(forgroundRightRect, _foregroundRight);
+        }
     }
 }

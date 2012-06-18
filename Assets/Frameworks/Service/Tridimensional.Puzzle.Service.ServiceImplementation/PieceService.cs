@@ -66,7 +66,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     mappingMesh.triangles = triangulator.Triangulate();
                     mappingMesh.uv = GetUVs(vertexes, range);
                     mappingMesh.RecalculateNormals();
-                    mappingMesh.ReCalculateTangents();
+                    //mappingMesh.ReCalculateTangents();
 
                     var backseatMesh = new Mesh();
                     backseatMesh.vertices = Merge<Vector3>(bottomVertexes, GetSideVertices(topVertexes, bottomVertexes));

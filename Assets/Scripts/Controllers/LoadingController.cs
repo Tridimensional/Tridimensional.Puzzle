@@ -20,6 +20,7 @@ public class LoadingController : MonoBehaviour
     ISceneService _sceneService;
     GameObject[] _pieces;
     LoadingAnimation _loadingAnimation;
+    Texture2D _backgroundImage;
 
     void Awake()
     {
@@ -38,6 +39,7 @@ public class LoadingController : MonoBehaviour
     void InitializeEnvironment()
     {
         _loadingAnimation = gameObject.AddComponent<LoadingAnimation>();
+        _backgroundImage = Resources.Load("Image/LevelBackground/3") as Texture2D;
 
         StartCoroutine(AsyncLoadObjects());
     }
@@ -63,8 +65,6 @@ public class LoadingController : MonoBehaviour
                 var name = _pieceService.GeneratePieceName(i, j);
 
                 var piece = _pieceService.GeneratePiece(name, Vector3.zero, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
-                var boxCollider = piece.AddComponent<BoxCollider>();
-                var rigidbody = piece.AddComponent<Rigidbody>();
 
                 GameObject.DontDestroyOnLoad(piece);
                 pieces.Add(piece);
@@ -73,6 +73,12 @@ public class LoadingController : MonoBehaviour
 
                 yield return 1;
             }
+        }
+
+        foreach (var piece in pieces)
+        {
+            piece.AddComponent<BoxCollider>();
+            piece.AddComponent<Rigidbody>();
         }
 
         _pieces = pieces.ToArray();
@@ -86,6 +92,12 @@ public class LoadingController : MonoBehaviour
         {
             Application.LoadLevel(LevelName.Battle.ToString());
         }
+    }
+
+    void OnGUI()
+    {
+        GUI.depth = 1;
+        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), _backgroundImage);
     }
 
     bool IsPiecesStopedMoving()
