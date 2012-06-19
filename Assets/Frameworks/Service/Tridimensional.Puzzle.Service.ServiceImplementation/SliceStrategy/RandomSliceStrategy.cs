@@ -64,7 +64,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
                 new Point(1000, 0)
             };
 
-            if (UnityEngine.Random.value < 0.5)
+            if (Random.value < 0.5)
             {
                 for (var i = 0; i < points.Length; i++) { points[i].Y *= -1; }
             }
@@ -79,7 +79,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
 
         private int GetRandomOffset(int range)
         {
-            return Mathf.RoundToInt(range * (1 - UnityEngine.Random.value * 2));
+            return Mathf.RoundToInt(range * (1 - Random.value * 2));
         }
     }
 }

@@ -184,7 +184,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private void DrawSoften(Texture2D source, int x, int y)
         {
-            var width = GlobalConfiguration.SoftenWidthInPixel;
+            var width = GlobalConfiguration.FeatherWidth;
 
             for (var i = -width; i <= width; i++)
             {
@@ -197,7 +197,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private void DrawSoften(Texture2D source, int x, float y)
         {
-            var width = GlobalConfiguration.SoftenWidthInPixel;
+            var width = GlobalConfiguration.FeatherWidth;
             var round = Mathf.RoundToInt(y);
 
             for (var i = -width; i <= width + 1; i++)
@@ -208,7 +208,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private void DrawSoften(Texture2D source, float x, int y)
         {
-            var width = GlobalConfiguration.SoftenWidthInPixel;
+            var width = GlobalConfiguration.FeatherWidth;
             var round = Mathf.RoundToInt(x);
 
             for (var i = -width; i <= width + 1; i++)
@@ -226,7 +226,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         private Color GetColor(float distance)
         {
-            var width = GlobalConfiguration.SoftenWidthInPixel;
+            var width = GlobalConfiguration.FeatherWidth;
             if (distance >= width + 1) { return Color.white; }
 
             var value = Mathf.Sqrt(distance / (width + 1));

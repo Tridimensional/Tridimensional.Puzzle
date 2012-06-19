@@ -42,7 +42,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             var sliceStart = sliceContract.Vertexes[0, 0];
             var sliceValidRange = sliceContract.Vertexes[rows, columns] - sliceStart;
-            var conversionRate = GlobalConfiguration.PictureHeightInMeter / sliceValidRange.Y;
+            var conversionRate = GlobalConfiguration.PictureHeight / sliceValidRange.Y;
 
             var range = new Vector2(sliceContract.Width, sliceContract.Height) * conversionRate;
             var pieceRange = new Vector2(1f * sliceValidRange.X / columns, 1f * sliceValidRange.Y / rows) * conversionRate;
@@ -58,8 +58,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     var triangulator = new Triangulator(vertexes);
                     var center = new Vector2(offset.x + (j + 0.5f) * pieceRange.x, offset.y + (i + 0.5f) * pieceRange.y);
 
-                    var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThicknessInMeter / 2));
-                    var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThicknessInMeter));
+                    var topVertexes = Array.ConvertAll<Vector2, Vector3>(vertexes, refer => new Vector3(refer.x - center.x, refer.y - center.y, -GlobalConfiguration.PieceThickness / 2));
+                    var bottomVertexes = Array.ConvertAll<Vector3, Vector3>(topVertexes, refer => new Vector3(refer.x, refer.y, refer.z + GlobalConfiguration.PieceThickness));
 
                     var mappingMesh = new Mesh();
                     mappingMesh.vertices = topVertexes;

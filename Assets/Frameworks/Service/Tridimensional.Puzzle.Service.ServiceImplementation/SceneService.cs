@@ -1,8 +1,8 @@
-﻿using Tridimensional.Puzzle.Core;
+﻿using System;
+using Tridimensional.Puzzle.Core;
+using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using UnityEngine;
-using Tridimensional.Puzzle.Core.Enumeration;
-using System;
 
 namespace Tridimensional.Puzzle.Service.ServiceImplementation
 {
@@ -39,14 +39,14 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             if (levelName == LevelName.Battle)
             {
-                camera.transform.position = GlobalConfiguration.DeskPosition + new Vector3(0.4f, 0.8f, 0.4f);
-                camera.transform.LookAt(GlobalConfiguration.DeskPosition + new Vector3(0, GlobalConfiguration.DeskThinknessInMeter / 2, 0));
+                camera.transform.position = GlobalConfiguration.DesktopPosition + new Vector3(0.0f, 1.0f, -0.0f);
+                camera.transform.LookAt(GlobalConfiguration.DesktopPosition + new Vector3(0, GlobalConfiguration.DesktopThinkness / 2, 0));
             }
             else
             {
                 camera.backgroundColor = GlobalConfiguration.BackgroundColor;
-                camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubjectInMeter);
-                camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeightInMeter * 0.5f / GlobalConfiguration.CameraToSubjectInMeter) * 180 / Mathf.PI;
+                camera.transform.position = new Vector3(0, 0, -GlobalConfiguration.CameraToSubject);
+                camera.fieldOfView = 2 * Mathf.Atan(GlobalConfiguration.PictureHeight * 0.5f / GlobalConfiguration.CameraToSubject) * 180 / Mathf.PI;
             }
 
             if (levelName == LevelName.Loading)
@@ -59,12 +59,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
         {
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             go.name = "Desktop";
-            go.transform.position = GlobalConfiguration.DeskPosition;
-            go.transform.localScale = new Vector3(10f, GlobalConfiguration.DeskThinknessInMeter, 10f);
-            go.transform.renderer.material.color = new Color32(0xff, 0x00, 0x00, 0xff);
+            go.transform.position = GlobalConfiguration.DesktopPosition;
+            go.transform.localScale = new Vector3(100f, GlobalConfiguration.DesktopThinkness, 100f);
+            go.transform.renderer.material.color = new Color32(0xff, 0xff, 0xff, 0xff);
 
             var boxCollider = go.GetComponent<BoxCollider>();
-            boxCollider.size += new Vector3(0, GlobalConfiguration.SurfaceThicknessInMeter * 2, 0);
+            boxCollider.size += new Vector3(0, GlobalConfiguration.Penetration * 4, 0);
 
             GameObject.DontDestroyOnLoad(go);
         }

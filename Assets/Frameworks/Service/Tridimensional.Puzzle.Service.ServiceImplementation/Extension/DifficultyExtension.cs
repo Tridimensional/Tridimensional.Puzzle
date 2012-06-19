@@ -8,11 +8,11 @@ namespace Tridimensional.Puzzle.Core.Enumeration
         {
             switch (difficulty)
             {
-                case Difficulty.Easy:
+                case Difficulty.Simple:
                     return 50;
-                case Difficulty.Middle:
+                case Difficulty.Medium:
                     return 80;
-                case Difficulty.Hard:
+                case Difficulty.Difficult:
                     return 150;
                 default:
                     throw new NotImplementedException();

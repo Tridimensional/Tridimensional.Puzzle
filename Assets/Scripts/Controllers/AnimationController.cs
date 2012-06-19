@@ -1,5 +1,4 @@
 ﻿using Tridimensional.Puzzle.Core;
-using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Core.Enumeration;
 using Tridimensional.Puzzle.Service.IServiceProvider;
 using Tridimensional.Puzzle.Service.ServiceImplementation;
@@ -33,11 +32,11 @@ public class AnimationController : MonoBehaviour
         var pieceContracts = _pieceService.GeneratePieceContracts(sliceContract);
         var backdropNormalMap = _graphicsService.GenerateNormalMap(sliceContract);
 
-        var visionWidth = GlobalConfiguration.PictureHeightInMeter * Screen.width / Screen.height;
+        var visionWidth = GlobalConfiguration.PictureHeight * Screen.width / Screen.height;
         var pieceWidth = visionWidth / layoutContract.Columns;
         var flightHeight = pieceWidth;
         var circleDistance = Mathf.PI * flightHeight / 2;
-        var straightSpeed = GlobalConfiguration.PictureHeightInMeter;
+        var straightSpeed = GlobalConfiguration.PictureHeight;
         var corneringSpeed = straightSpeed * 0.2f;
         var rotationSpeed = 45 / pieceWidth;
 
@@ -47,7 +46,7 @@ public class AnimationController : MonoBehaviour
             {
                 var pieceContract = pieceContracts[i, j];
                 var pieceName = _pieceService.GeneratePieceName(i, j);
-                var distance = circleDistance + 4f * (visionWidth - 2 * (pieceContract.Position.x + pieceWidth * (UnityEngine.Random.value - 1)));
+                var distance = circleDistance + 4f * (visionWidth - 2 * (pieceContract.Position.x + pieceWidth * (Random.value - 1)));
                 var currentPosition = pieceContract.Position + new Vector3(distance - circleDistance, 0, 0);
 
                 var piece = _pieceService.GeneratePiece(pieceName, currentPosition, pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), backdropImage, backdropNormalMap);
