@@ -43,8 +43,6 @@ public class LoadingController : MonoBehaviour
 
     IEnumerator AsyncLoadObjects()
     {
-        yield return 0;
-
         var mainTexture = _gameService.GetMainTexture();
         var pieceContracts = _gameService.GetPieceContracts();
         var normalMap = _gameService.GetNormalMap();
@@ -64,26 +62,24 @@ public class LoadingController : MonoBehaviour
                 var pieceContract = pieceContracts[i, j];
                 var name = _pieceService.GeneratePieceName(i, j);
 
-                var piece = _pieceService.GeneratePiece(name, GetRandomPosition(0.35f), GetRandomRotation(), pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
+                var piece = _pieceService.GeneratePiece(name, GetRandomPosition(0.25f), GetRandomRotation(), pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
+                piece.AddComponent<PieceBehaviour>();
+
+                var boxCollider = piece.AddComponent<BoxCollider>();
+                boxCollider.size += new Vector3(penetration, penetration, penetration);
 
                 GameObject.DontDestroyOnLoad(piece);
                 pieces.Add(piece);
 
-                _progress = ++index / pieceCount;
+                yield return 0;
 
-                yield return 1;
+                _progress = ++index / pieceCount;
             }
         }
 
         foreach (var piece in pieces)
         {
-            var boxCollider = piece.AddComponent<BoxCollider>();
-            boxCollider.size += new Vector3(penetration, penetration, penetration);
-
-            var rigidbody = piece.AddComponent<Rigidbody>();
-            rigidbody.drag = 0;
-
-            piece.AddComponent<PieceBehaviour>();
+            piece.AddComponent<Rigidbody>();
         }
 
         _pieces = pieces.ToArray();
@@ -107,7 +103,10 @@ public class LoadingController : MonoBehaviour
 
     Vector3 GetRandomPosition(float range)
     {
-        return new Vector3(Random.Range(-range, range), Random.Range(0, range) + GlobalConfiguration.DesktopThinkness, Random.Range(-range, range));
+        var angle = Random.Range(0f, 360f);
+        var distance = Random.Range(0f, range);
+
+        return new Vector3(distance * Mathf.Cos(angle), Random.Range(0, range) + GlobalConfiguration.DesktopThinkness, distance * Mathf.Sin(angle));
     }
 
     Quaternion GetRandomRotation()
@@ -117,8 +116,6 @@ public class LoadingController : MonoBehaviour
 
     bool IsPiecesStopedMoving()
     {
-        if (_pieces == null) { _pieces = GameObject.FindGameObjectsWithTag(CustomTags.Piece.ToString()); }
-
         var rigidbody = null as Rigidbody;
 
         foreach (var piece in _pieces)
