@@ -79,7 +79,7 @@ public class LoadingController : MonoBehaviour
 
         foreach (var piece in pieces)
         {
-            piece.AddComponent<Rigidbody>();
+            var rigidbody = piece.AddComponent<Rigidbody>();
         }
 
         _pieces = pieces.ToArray();
