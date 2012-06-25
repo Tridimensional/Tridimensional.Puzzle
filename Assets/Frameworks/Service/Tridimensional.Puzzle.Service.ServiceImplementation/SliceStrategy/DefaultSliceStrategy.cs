@@ -29,7 +29,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation.SliceStrategy
             {
                 new Point(0, 0),
                 new Point(250, 0),
-                new Point(500, 150),
+                new Point(500, 100),
                 new Point(750, 0),
                 new Point(1000, 0)
             };
