@@ -64,7 +64,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             go.transform.renderer.material.color = new Color32(0xff, 0xff, 0xff, 0xff);
 
             var boxCollider = go.GetComponent<BoxCollider>();
-            boxCollider.size += new Vector3(0, GlobalConfiguration.Penetration * 4, 0);
 
             GameObject.DontDestroyOnLoad(go);
         }

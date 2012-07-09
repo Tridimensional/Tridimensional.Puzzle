@@ -118,11 +118,11 @@ public class LoadingController : MonoBehaviour
     {
         var rigidbody = null as Rigidbody;
 
-        foreach (var piece in _pieces)
-        {
-            rigidbody = piece.GetComponent<Rigidbody>();
-            if (rigidbody == null || !rigidbody.IsSleeping()) { return false; }
-        }
+        //foreach (var piece in _pieces)
+        //{
+        //    rigidbody = piece.GetComponent<Rigidbody>();
+        //    if (rigidbody == null || !rigidbody.IsSleeping()) { return false; }
+        //}
 
         return true;
     }
