@@ -32,7 +32,7 @@ public class CrossingController : MonoBehaviour
         gameContract.OnlineType = OnlineType.Local;
         gameContract.SlicePattern = SlicePattern.Default;
         gameContract.Difficulty = Difficulty.Difficult;
-        gameContract.ImageAddress = "Image/LevelBackground/4";
+        gameContract.ImageAddress = "Image/LevelBackground/3";
 
         _gameService.Apply();
     }

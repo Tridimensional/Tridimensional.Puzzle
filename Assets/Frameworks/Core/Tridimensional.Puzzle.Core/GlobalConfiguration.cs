@@ -11,6 +11,6 @@ namespace Tridimensional.Puzzle.Core
         public static float Penetration = 0.00f;
         public static float DesktopThinkness = 0.5f;
         public static int FeatherWidth = 3;
-        public static Vector3 DesktopPosition = new Vector3(0, 0f, 0);
+        public static Vector3 DesktopPosition = new Vector3(0f, 0f, 0f);
     }
 }

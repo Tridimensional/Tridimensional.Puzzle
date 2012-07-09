@@ -36,16 +36,16 @@ public class LoadingController : MonoBehaviour
     void InitializeEnvironment()
     {
         _loadingAnimation = gameObject.AddComponent<LoadingAnimation>();
-        _backgroundImage = Resources.Load("Image/LevelBackground/3") as Texture2D;
+        _backgroundImage = Resources.Load("Image/LevelBackground/2") as Texture2D;
 
         StartCoroutine(AsyncLoadObjects());
     }
 
     IEnumerator AsyncLoadObjects()
     {
-        var mainTexture = _gameService.GetMainTexture();
+        var mainTexture = null as Texture2D;
         var pieceContracts = _gameService.GetPieceContracts();
-        var normalMap = _gameService.GetNormalMap();
+        var normalMap = null as Texture2D;
 
         var rows = pieceContracts.GetLength(0);
         var columns = pieceContracts.GetLength(1);
@@ -63,7 +63,7 @@ public class LoadingController : MonoBehaviour
                 var name = _pieceService.GeneratePieceName(i, j);
 
                 var piece = _pieceService.GeneratePiece(name, GetRandomPosition(0.25f), GetRandomRotation(), pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
-                piece.AddComponent<PieceBehaviour>();
+                //piece.AddComponent<PieceBehaviour>();
 
                 var boxCollider = piece.AddComponent<BoxCollider>();
                 boxCollider.size += new Vector3(penetration, penetration, penetration);
