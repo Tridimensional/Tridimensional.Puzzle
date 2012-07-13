@@ -1,5 +1,4 @@
-﻿using System;
-using Tridimensional.Puzzle.Core;
+﻿using Tridimensional.Puzzle.Core;
 using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Service.Contract;
 using Tridimensional.Puzzle.Service.IServiceProvider;
@@ -29,22 +28,12 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         public Texture2D GenerateNormalMap(SliceContract sliceContract)
         {
-            return GenerateNormalMap(sliceContract, null);
-        }
-
-        public Texture2D GenerateNormalMap(SliceContract sliceContract, Action<float> percentComplet)
-        {
-            return GenerateNormalMap(sliceContract, 1, percentComplet);
+            return GenerateNormalMap(sliceContract, 1);
         }
 
         public Texture2D GenerateNormalMap(SliceContract sliceContract, float strength)
         {
-            return GenerateNormalMap(sliceContract, strength, null);
-        }
-
-        public Texture2D GenerateNormalMap(SliceContract sliceContract, float strength, Action<float> percentComplet)
-        {
-            var heightMap = GenerateHeightMap(sliceContract, percentComplet);
+            var heightMap = GenerateHeightMap(sliceContract);
 
             var dx = 0f; var dy = 0f;
             var left = 0f; var right = 0f; var up = 0f; var down = 0f;
@@ -76,11 +65,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         public Texture2D GenerateHeightMap(SliceContract sliceContract)
         {
-            return GenerateHeightMap(sliceContract, null);
-        }
-
-        public Texture2D GenerateHeightMap(SliceContract sliceContract, Action<float> percentComplet)
-        {
             var heightMap = new Texture2D(sliceContract.Width, sliceContract.Height);
 
             for (var i = 0; i < heightMap.width; i++)
@@ -95,9 +79,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
             var lines = null as Point[];
 
-            var totalSteps = (float)rows * columns + rows + columns;
-            var completSteps = 0;
-
             for (var i = 0; i < rows - 1; i++)
             {
                 for (var j = 0; j < columns - 1; j++)
@@ -111,8 +92,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     DrawLine(heightMap, sliceContract.Vertexes[i, j + 1], lines[0]);
                     DrawLine(heightMap, lines);
                     DrawLine(heightMap, lines[lines.Length - 1], sliceContract.Vertexes[i + 1, j + 1]);
-
-                    if (percentComplet != null) { percentComplet((++completSteps) / totalSteps); }
                 }
             }
 
@@ -131,8 +110,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                 DrawLine(heightMap, lines);
                 DrawLine(heightMap, lines[lines.Length - 1], sliceContract.Vertexes[rows, j + 1]);
             }
-
-            if (percentComplet != null) { percentComplet(1); }
 
             heightMap.Apply();
 

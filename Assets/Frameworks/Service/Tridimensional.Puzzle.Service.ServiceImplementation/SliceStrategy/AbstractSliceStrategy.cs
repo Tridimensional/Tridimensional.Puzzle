@@ -1,4 +1,3 @@
-using System;
 using Tridimensional.Puzzle.Core.Entity;
 using Tridimensional.Puzzle.Foundation.Utility;
 using Tridimensional.Puzzle.Service.Contract;

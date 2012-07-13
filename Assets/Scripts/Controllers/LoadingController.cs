@@ -43,9 +43,9 @@ public class LoadingController : MonoBehaviour
 
     IEnumerator AsyncLoadObjects()
     {
-        var mainTexture = null as Texture2D;
+        var mainTexture = _gameService.GetMainTexture();
         var pieceContracts = _gameService.GetPieceContracts();
-        var normalMap = null as Texture2D;
+        var normalMap = _gameService.GetNormalMap();
 
         var rows = pieceContracts.GetLength(0);
         var columns = pieceContracts.GetLength(1);
@@ -53,7 +53,7 @@ public class LoadingController : MonoBehaviour
 
         var index = 0;
         var pieceCount = (float)rows * columns;
-        var penetration = GlobalConfiguration.Penetration * 2;
+        var penetration = Physics.minPenetrationForPenalty * 2;
 
         for (var i = 0; i < rows; i++)
         {
@@ -62,11 +62,11 @@ public class LoadingController : MonoBehaviour
                 var pieceContract = pieceContracts[i, j];
                 var name = _pieceService.GeneratePieceName(i, j);
 
-                var piece = _pieceService.GeneratePiece(name, GetRandomPosition(0.25f), GetRandomRotation(), pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
+                var piece = _pieceService.GeneratePiece(name, GetRandomPosition(2f), GetRandomRotation(), pieceContract.MappingMesh, pieceContract.BackseatMesh, new Color32(0xcc, 0xcc, 0xcc, 0xff), mainTexture, normalMap);
                 //piece.AddComponent<PieceBehaviour>();
 
-                var boxCollider = piece.AddComponent<BoxCollider>();
-                boxCollider.size += new Vector3(penetration, penetration, penetration);
+                var collider = piece.AddComponent<BoxCollider>();
+                //collider.size += new Vector3(penetration, penetration, penetration);
 
                 GameObject.DontDestroyOnLoad(piece);
                 pieces.Add(piece);
@@ -79,7 +79,8 @@ public class LoadingController : MonoBehaviour
 
         foreach (var piece in pieces)
         {
-            var rigidbody = piece.AddComponent<Rigidbody>();
+            //var rigidbody = piece.AddComponent<Rigidbody>();
+            //rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         }
 
         _pieces = pieces.ToArray();

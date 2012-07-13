@@ -31,14 +31,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
         public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract)
         {
-            return GeneratePieceContracts(sliceContract, null);
-        }
-
-        public PieceContract[,] GeneratePieceContracts(SliceContract sliceContract, Action<float> percentComplet)
-        {
             var rows = sliceContract.Vertexes.GetLength(0) - 1;
             var columns = sliceContract.Vertexes.GetLength(1) - 1;
-            var pieceCount = (float)rows * columns;
 
             var sliceStart = sliceContract.Vertexes[0, 0];
             var sliceValidRange = sliceContract.Vertexes[rows, columns] - sliceStart;
@@ -74,8 +68,6 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
                     backseatMesh.RecalculateNormals();
 
                     result[i, j] = new PieceContract { MappingMesh = mappingMesh, BackseatMesh = backseatMesh, Position = center - range / 2 };
-
-                    if (percentComplet != null) { percentComplet((i * columns + j + 1) / pieceCount); }
                 }
             }
 
@@ -200,6 +192,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var go = new GameObject(name);
             go.AddComponent<MeshFilter>().mesh = backseatMesh;
             go.AddComponent<MeshRenderer>().material.color = color;
+            go.transform.renderer.castShadows = false;
+            go.transform.renderer.receiveShadows = false;
             go.transform.position = position;
             go.transform.localRotation = rotation;
             go.tag = CustomTags.Piece.ToString();
@@ -207,6 +201,8 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             var mapping = new GameObject("Mapping");
             mapping.AddComponent<MeshFilter>().mesh = mappingMesh;
             mapping.AddComponent<MeshRenderer>().material = Resources.Load("Material/BumpedDiffuse") as Material;
+            mapping.transform.renderer.castShadows = false;
+            mapping.transform.renderer.receiveShadows = false;
             mapping.transform.renderer.material.SetTexture("_MainTex", mainTexture);
             mapping.transform.renderer.material.SetTexture("_BumpMap", normalMap);
 

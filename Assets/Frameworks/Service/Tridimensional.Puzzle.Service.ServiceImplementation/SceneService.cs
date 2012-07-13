@@ -39,7 +39,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
 
             if (levelName == LevelName.Battle)
             {
-                camera.transform.position = GlobalConfiguration.DesktopPosition + new Vector3(0.0f, 1.0f, -0.0f);
+                camera.transform.position = GlobalConfiguration.DesktopPosition + new Vector3(0.0f, 10.0f, 0.0f);
                 camera.transform.LookAt(GlobalConfiguration.DesktopPosition + new Vector3(0, GlobalConfiguration.DesktopThinkness * 0.5f, 0));
             }
             else
@@ -63,7 +63,7 @@ namespace Tridimensional.Puzzle.Service.ServiceImplementation
             go.transform.localScale = new Vector3(100f, GlobalConfiguration.DesktopThinkness, 100f);
             go.transform.renderer.material.color = new Color32(0xff, 0xff, 0xff, 0xff);
 
-            go.GetComponent<BoxCollider>().size += new Vector3(0, GlobalConfiguration.Penetration * 4, 0);
+            go.GetComponent<BoxCollider>().size += new Vector3(0, Physics.minPenetrationForPenalty * 4, 0);
 
             GameObject.DontDestroyOnLoad(go);
         }
