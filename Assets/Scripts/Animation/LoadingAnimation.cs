@@ -4,8 +4,8 @@ public class LoadingAnimation : MonoBehaviour
 {
     public float Progress;
 
-    int width;
-    int height;
+    int _width;
+    int _height;
     Texture2D _backgroundLeft;
     Texture2D _backgroundMiddle;
     Texture2D _backgroundRight;
@@ -24,17 +24,17 @@ public class LoadingAnimation : MonoBehaviour
         _foregroundMiddle = Resources.Load("Image/Loading/ForegroundMiddle") as Texture2D;
         _foregroundRight = Resources.Load("Image/Loading/ForegroundRight") as Texture2D;
 
-        width = Screen.width / 3;
-        height = width / 10;
+        _width = Screen.width / 3;
+        _height = _width / 10;
     }
 
     void OnGUI()
     {
         GUI.depth = 0;
 
-        var backgroundLeftRect = new Rect((Screen.width - width) / 2, (Screen.height - height) / 2, height / 2, height);
-        var backgroundMiddleRect = new Rect(backgroundLeftRect.xMax, backgroundLeftRect.yMin, width - height, height);
-        var backgroundRightRect = new Rect(backgroundMiddleRect.xMax, backgroundLeftRect.yMin, height / 2, height);
+        var backgroundLeftRect = new Rect((Screen.width - _width) / 2, (Screen.height - _height) / 2, _height / 2, _height);
+        var backgroundMiddleRect = new Rect(backgroundLeftRect.xMax, backgroundLeftRect.yMin, _width - _height, _height);
+        var backgroundRightRect = new Rect(backgroundMiddleRect.xMax, backgroundLeftRect.yMin, _height / 2, _height);
 
         GUI.DrawTexture(backgroundLeftRect, _backgroundLeft);
         GUI.DrawTexture(backgroundMiddleRect, _backgroundMiddle);
@@ -43,8 +43,8 @@ public class LoadingAnimation : MonoBehaviour
         if (Progress > 0)
         {
             var forgroundLeftRect = backgroundLeftRect;
-            var forgroundMiddleRect = new Rect(forgroundLeftRect.xMax, forgroundLeftRect.yMin, Progress * (width - height), height);
-            var forgroundRightRect = new Rect(forgroundMiddleRect.xMax, forgroundLeftRect.yMin, height / 2, height);
+            var forgroundMiddleRect = new Rect(forgroundLeftRect.xMax, forgroundLeftRect.yMin, Progress * (_width - _height), _height);
+            var forgroundRightRect = new Rect(forgroundMiddleRect.xMax, forgroundLeftRect.yMin, _height / 2, _height);
 
             GUI.DrawTexture(forgroundLeftRect, _foregroundLeft);
             GUI.DrawTexture(forgroundMiddleRect, _foregroundMiddle);
